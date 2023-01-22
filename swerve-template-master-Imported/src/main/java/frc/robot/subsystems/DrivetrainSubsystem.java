@@ -19,6 +19,8 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.Ultrasonic;
+import edu.wpi.first.wpilibj.motorcontrol.PWMTalonFX;
 
 import static frc.robot.Constants.*;
 
@@ -78,6 +80,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
   private final SwerveModule m_backRightModule;
 
   private ChassisSpeeds m_chassisSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
+
+  private PWMTalonFX m_intakeMotor = new PWMTalonFX(0);
+  
+  private Ultrasonic m_ultrasonic = new Ultrasonic(1,2);
 
   public DrivetrainSubsystem() {
     ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain");
@@ -152,6 +158,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
             BACK_RIGHT_MODULE_STEER_ENCODER,
             BACK_RIGHT_MODULE_STEER_OFFSET
     );
+
   }
 
   /**
@@ -181,8 +188,23 @@ public class DrivetrainSubsystem extends SubsystemBase {
   }
 
   public void drive(ChassisSpeeds chassisSpeeds) {
-    m_chassisSpeeds = chassisSpeeds;
+        m_chassisSpeeds = chassisSpeeds;
   }
+
+  public void intake(){
+
+        if(m_ultrasonic.getRangeInches()>2){
+                m_intakeMotor.set(1);
+
+        } else{
+                m_intakeMotor.set(0);
+        }
+  }
+
+  public void intakeReverse(){
+        m_intakeMotor.set(-1);
+  }
+  
 
   @Override
   public void periodic() {

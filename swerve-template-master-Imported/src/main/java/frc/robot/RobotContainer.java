@@ -25,10 +25,10 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
   private SlewRateLimiter rateLimit = new SlewRateLimiter(1.0);
-  //TODO: getwheels to rist in oriantation
-  // TODO: add slew rate
+  //TODO: Get wheels to rest in orientation.
+  //TODO: Add slew rate
   //TODO: account for gyroscope drift
-  //TODO: use sensor to stop where peices need to go
+  //TODO: use sensor to stop where pieces need to go
   //TODO: gyrostabilization
 
   private final XboxController m_controller = new XboxController(0);
@@ -53,6 +53,7 @@ public class RobotContainer {
     configureButtonBindings();
   }
 
+
   /**
    * Use this method to define your button->command mappings. Buttons can be created by
    * instantiating a {@link GenericHID} or one of its subclasses ({@link
@@ -64,6 +65,10 @@ public class RobotContainer {
     new Button(m_controller::getBackButton)
             // No requirements because we don't need to interrupt anything
             .whenPressed(m_drivetrainSubsystem::zeroGyroscope);
+    new Button(m_controller::getRightBumper)
+            .whenPressed(m_drivetrainSubsystem::intake);
+    new Button(m_controller::getLeftBumper)
+            .whenPressed(m_drivetrainSubsystem::intakeReverse);
   }
 
   /**
