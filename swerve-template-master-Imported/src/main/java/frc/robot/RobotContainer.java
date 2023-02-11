@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.subsystems.DrivetrainSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 
 /**
@@ -24,6 +25,7 @@ import edu.wpi.first.math.filter.SlewRateLimiter;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
+  private final IntakeSubsystem m_IntakeSubsystem = new IntakeSubsystem();
   private SlewRateLimiter rateLimit = new SlewRateLimiter(1.0);
   //TODO: Get wheels to rest in orientation.
   //TODO: Add slew rate
@@ -66,9 +68,9 @@ public class RobotContainer {
             // No requirements because we don't need to interrupt anything
             .whenPressed(m_drivetrainSubsystem::zeroGyroscope);
     new Button(m_controller::getRightBumper)
-            .whenPressed(m_drivetrainSubsystem::intake);
+            .whenPressed(m_IntakeSubsystem::intake);
     new Button(m_controller::getLeftBumper)
-            .whenPressed(m_drivetrainSubsystem::intakeReverse);
+            .whenPressed(m_IntakeSubsystem::intakeReverse);
   }
 
   /**
