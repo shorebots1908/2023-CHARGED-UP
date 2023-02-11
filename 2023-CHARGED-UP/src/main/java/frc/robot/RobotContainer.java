@@ -15,6 +15,7 @@ import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import edu.wpi.first.math.filter.SlewRateLimiter;
+import frc.robot.subsystems.ArmSubsystem;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -26,6 +27,7 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
   private final IntakeSubsystem m_intakeSubsystem = new IntakeSubsystem();
+  private final ArmSubsystem m_ArmSubsystem = new ArmSubsystem();
   private SlewRateLimiter rateLimit = new SlewRateLimiter(1.0);
   //TODO: Get wheels to rest in orientation.
   //TODO: Add slew rate
@@ -71,6 +73,8 @@ public class RobotContainer {
             .whenPressed(m_intakeSubsystem::intake);
     new Button(m_controller::getLeftBumper)
             .whenPressed(m_intakeSubsystem::intakeReverse);
+    new Button(m_controller::getLeftTriggerAxis)
+            .whenPressed(()-> {m_ArmSubsystem.lowerArm(m_controller.getLeftTriggerAxis())});
   }
 
   /**
