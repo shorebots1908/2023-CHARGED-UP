@@ -30,6 +30,9 @@ public class RobotContainer {
   //TODO: account for gyroscope drift
   //TODO: use sensor to stop where peices need to go
   //TODO: gyrostabilization
+  //TODO: Arm subsystem
+  //TODO: Intake subsystem
+  //TODO: Vision processing and camera coprocessor
 
   private final XboxController m_controller = new XboxController(0);
 
