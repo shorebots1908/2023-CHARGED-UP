@@ -13,15 +13,21 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 // import edu.wpi.first.math.filter.SlewRateLimiter;
 // import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj.Ultrasonic;
+import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.motorcontrol.PWMTalonFX;
 
 
 public class IntakeSubsystem extends SubsystemBase {
-    private PWMTalonFX m_intakeMotor = new PWMTalonFX(0);
+    private PWMTalonFX m_intakeMotor1 = new PWMTalonFX(16);
+    private PWMTalonFX m_intakeMotor2 = new PWMTalonFX(17);
   
     private Ultrasonic m_ultrasonic = new Ultrasonic(1,2);
 
-    public IntakeSubsystem() {}
+    private MotorControllerGroup m_intakeMotors = new MotorControllerGroup(m_intakeMotor1, m_intakeMotor2);
+
+    public IntakeSubsystem() {
+        m_intakeMotor1.setInverted(true);
+    }
 
 
 

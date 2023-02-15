@@ -6,8 +6,9 @@ import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.motorcontrol.PWMTalonFX;
 
 public class ArmSubsystem extends SubsystemBase{
-    private MotorController armMotor1 = new PWMTalonFX(8);
-    private MotorController armMotor2 = new PWMTalonFX(9);
+    private MotorController armMotor1 = new PWMTalonFX(13);
+    private MotorController armMotor2 = new PWMTalonFX(14);
+    private MotorController wristMotor1 = new PWMTalonFX(15);
     private double armSpeedLimit = 0.30;
 
     private MotorControllerGroup armMotors = new MotorControllerGroup(armMotor1, armMotor2);
