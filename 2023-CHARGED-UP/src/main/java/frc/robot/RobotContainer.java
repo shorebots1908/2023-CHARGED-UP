@@ -55,8 +55,9 @@ public class RobotContainer {
     ));
 
     m_ArmSubsystem.setDefaultCommand(new DefaultArmCommand(m_ArmSubsystem,
-     () -> modifyAxis(m_controller.getRightTriggerAxis()),
-     () -> modifyAxis(m_controller.getLeftTriggerAxis())));
+     () -> 0.2 * modifyAxis(m_controller.getRightTriggerAxis()),
+     () -> 0.2 * modifyAxis(m_controller.getLeftTriggerAxis()),
+     () -> 0.05 * modifyAxis(m_controller.getRightY())));
 
     // Configure the button bindings
     configureButtonBindings();

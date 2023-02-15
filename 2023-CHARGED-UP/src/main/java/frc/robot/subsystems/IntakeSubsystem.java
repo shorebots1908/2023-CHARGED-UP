@@ -33,15 +33,16 @@ public class IntakeSubsystem extends SubsystemBase {
 
     public void intake(){
 
-        if(m_ultrasonic.getRangeInches()>2){
-                m_intakeMotor.set(1);
+        // if(m_ultrasonic.getRangeInches()>2){
+        //         m_intakeMotors.set(1);
 
-        } else{
-                m_intakeMotor.set(0);
-        }
+        // } else{
+        //         m_intakeMotors.set(0);
+        // }
+        m_intakeMotors.set(0.32);
     }
 
     public void intakeReverse(){
-            m_intakeMotor.set(-1);
+            m_intakeMotors.set(-1);
     }
 }

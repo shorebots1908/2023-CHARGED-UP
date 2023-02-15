@@ -27,5 +27,7 @@ public class ArmSubsystem extends SubsystemBase{
     {
         armMotors.set(-armSpeedLimit * power);
     }
-    
+    public void wristMove(double power) {
+        wristMotor1.set(power)
+    }
 }
