@@ -1,10 +1,8 @@
 package frc.robot.commands;
 
 import java.util.function.DoubleSupplier;
-
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.ArmSubsystem;
-import java.util.function.DoubleSupplier;
 
 public class DefaultArmCommand extends CommandBase {
     private final ArmSubsystem m_ArmSubsystem;
@@ -20,7 +18,7 @@ public class DefaultArmCommand extends CommandBase {
         this.m_ArmSubsystem = armSubsystem;
         this.m_heightLiftRateSupplier = heightLiftRateSupplier;
         this.m_heightLowerRateSupplier = heightLowerRateSupplier;
-        this.m_wristLiftSupplier = wristLiftRateSupplier;
+        this.m_wristLiftRateSupplier = wristLiftRateSupplier;
 
 
         addRequirements(armSubsystem);
@@ -36,7 +34,7 @@ public class DefaultArmCommand extends CommandBase {
         else {
             m_ArmSubsystem.lowerArm(m_heightLowerRateSupplier.getAsDouble());
         }
-        m_ArmSubsystem.wristMove(m_wristLiftSupplier.getAsDouble());
+        m_ArmSubsystem.wristMove(m_wristLiftRateSupplier.getAsDouble());
     }
 
     @Override
