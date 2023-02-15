@@ -15,11 +15,13 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.motorcontrol.PWMTalonFX;
-
+import com.revrobotics.*;
+import com.revrobotics.CANSparkMax.IdleMode;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 public class IntakeSubsystem extends SubsystemBase {
-    private PWMTalonFX m_intakeMotor1 = new PWMTalonFX(16);
-    private PWMTalonFX m_intakeMotor2 = new PWMTalonFX(17);
+    private CANSparkMax m_intakeMotor1 = new CANSparkMax(16, MotorType.kBrushless);
+    private CANSparkMax m_intakeMotor2 = new CANSparkMax(17, MotorType.kBrushless);
   
     private Ultrasonic m_ultrasonic = new Ultrasonic(1,2);
 
@@ -42,7 +44,18 @@ public class IntakeSubsystem extends SubsystemBase {
         m_intakeMotors.set(0.32);
     }
 
-    public void intakeReverse(){
-            m_intakeMotors.set(-1);
+    public void intakeReverse()
+    {
+            m_intakeMotors.set(-0.32);
+    }
+
+    public void intakeStop() {
+        m_intakeMotors.set(0);
+    }
+
+    @Override
+    public void periodic()
+    {
+
     }
 }

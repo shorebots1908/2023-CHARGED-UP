@@ -29,18 +29,18 @@ public class DefaultArmCommand extends CommandBase {
     {
         double liftInput = m_heightLiftRateSupplier.getAsDouble();
         if(liftInput > 0){
-            m_ArmSubsystem.liftArm(liftInput);
+            m_ArmSubsystem.setArmStates(liftInput, 0);
         }
         else {
-            m_ArmSubsystem.lowerArm(m_heightLowerRateSupplier.getAsDouble());
+            m_ArmSubsystem.setArmStates(-(m_heightLowerRateSupplier.getAsDouble()), 0);
         }
-        m_ArmSubsystem.wristMove(m_wristLiftRateSupplier.getAsDouble());
+        m_ArmSubsystem.setArmStates(m_wristLiftRateSupplier.getAsDouble(), 1);
     }
 
     @Override
     public void end(boolean interrupted) {
-        m_ArmSubsystem.liftArm(0);
-        m_ArmSubsystem.wristMove(0);
+        m_ArmSubsystem.setArmStates(0, 0);
+        m_ArmSubsystem.setArmStates(0, 0);
     }
 }
 
