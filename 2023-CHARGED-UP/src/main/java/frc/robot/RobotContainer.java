@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
+import frc.robot.commands.DefaultArmCommand;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -53,6 +54,10 @@ public class RobotContainer {
             () -> -modifyAxis(m_controller.getRightX()) * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND
     ));
 
+    m_ArmSubsystem.setDefaultCommand(new DefaultArmCommand(m_ArmSubsystem,
+     () -> modifyAxis(m_controller.getRightTriggerAxis()),
+     () -> modifyAxis(m_controller.getLeftTriggerAxis())));
+
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -73,8 +78,6 @@ public class RobotContainer {
             .whenPressed(m_intakeSubsystem::intake);
     new Button(m_controller::getLeftBumper)
             .whenPressed(m_intakeSubsystem::intakeReverse);
-    new Button(m_controller::getLeftTriggerAxis)
-            .whenPressed(()-> {m_ArmSubsystem.lowerArm(m_controller.getLeftTriggerAxis())});
   }
 
   /**
