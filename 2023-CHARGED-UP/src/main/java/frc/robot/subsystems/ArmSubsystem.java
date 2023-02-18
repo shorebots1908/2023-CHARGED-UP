@@ -4,17 +4,34 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.motorcontrol.PWMTalonFX;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import com.revrobotics.*;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 public class ArmSubsystem extends SubsystemBase{
+    //motor definitions
     private CANSparkMax armMotor1 = new CANSparkMax(13, MotorType.kBrushless);
     private CANSparkMax armMotor2 = new CANSparkMax(14, MotorType.kBrushless);
     private CANSparkMax wristMotor1 = new CANSparkMax(15, MotorType.kBrushless);
+
+    //state management parameterd
     private double armSpeedLimit = 0.25;
     private double wristSpeedLimit = 0.25;
     private double[] armStates = {0.0, 0.0};
+
+    //encoders
+    private RelativeEncoder armEncoder;
+    private RelativeEncoder wristEncoder;
+
+    //hold position settings
+    //TODO: set proper values based on encoder readouts.
+    
+    private double HighPosition;
+    private double MidPosition;
+    private double LowPosition;
+    private double StowPosition;
 
     private MotorControllerGroup armMotors = new MotorControllerGroup(armMotor1, armMotor2);
 
@@ -22,6 +39,14 @@ public class ArmSubsystem extends SubsystemBase{
     {
         armMotor1.setInverted(true);
         wristMotor1.setIdleMode(IdleMode.kBrake);
+        armEncoder = armMotor1.getEncoder();
+        wristEncoder = wristMotor1.getEncoder();
+        SmartDashboard.putNumber("High Position", HighPosition);
+        SmartDashboard.putNumber("Middle Position", MidPosition);
+        SmartDashboard.putNumber("Lower Position", LowPosition);
+        SmartDashboard.putNumber("Stowed Position", StowPosition);
+
+
     }
 
     public void liftArm(double power) 
@@ -48,5 +73,11 @@ public class ArmSubsystem extends SubsystemBase{
     public void periodic() {
         wristMove(this.armStates[1]);
         liftArm(this.armStates[0]);
+        SmartDashboard.putNumber("armMotor1", armEncoder.getPosition());
+        SmartDashboard.putNumber("wristMotor1", wristEncoder.getPosition());
+        SmartDashboard.getNumber("High Position", HighPosition);
+        SmartDashboard.getNumber("Middle Position", MidPosition);
+        SmartDashboard.getNumber("Lower Position", LowPosition);
+        SmartDashboard.getNumber("Stowed Position", StowPosition);
     }
 }

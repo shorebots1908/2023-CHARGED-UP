@@ -15,6 +15,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.motorcontrol.PWMTalonFX;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import com.revrobotics.*;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
@@ -22,13 +24,18 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 public class IntakeSubsystem extends SubsystemBase {
     private CANSparkMax m_intakeMotor1 = new CANSparkMax(16, MotorType.kBrushless);
     private CANSparkMax m_intakeMotor2 = new CANSparkMax(17, MotorType.kBrushless);
-  
+    private double intakeSpeed = 0.20;
+    private double intakeEject = 0.32;
     private Ultrasonic m_ultrasonic = new Ultrasonic(1,2);
 
     private MotorControllerGroup m_intakeMotors = new MotorControllerGroup(m_intakeMotor1, m_intakeMotor2);
 
     public IntakeSubsystem() {
-        m_intakeMotor1.setInverted(true);
+        m_intakeMotor2.setInverted(true);
+        intakeSpeed=SmartDashboard.getNumber("Intake Speed", intakeSpeed);
+        SmartDashboard.putNumber("Intake Speed", intakeSpeed);
+        intakeEject=SmartDashboard.getNumber("Intake Eject", intakeEject);
+        SmartDashboard.putNumber("Intake Eject", intakeEject);
     }
 
 
@@ -41,12 +48,13 @@ public class IntakeSubsystem extends SubsystemBase {
         // } else{
         //         m_intakeMotors.set(0);
         // }
-        m_intakeMotors.set(0.32);
+        m_intakeMotors.set(intakeSpeed);
     }
+
 
     public void intakeReverse()
     {
-            m_intakeMotors.set(-0.32);
+            m_intakeMotors.set(-intakeEject);
     }
 
     public void intakeStop() {
@@ -56,6 +64,7 @@ public class IntakeSubsystem extends SubsystemBase {
     @Override
     public void periodic()
     {
-
+        intakeSpeed = SmartDashboard.getNumber("Intake Speed", intakeSpeed);
+        intakeEject = SmartDashboard.getNumber("Intake Eject", intakeEject);
     }
 }
