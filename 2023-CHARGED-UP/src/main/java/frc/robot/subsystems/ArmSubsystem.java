@@ -25,9 +25,13 @@ public class ArmSubsystem extends SubsystemBase{
     private RelativeEncoder armEncoder;
     private RelativeEncoder wristEncoder;
 
+
+    private double minSpeed = 0.05;
+    private double maxSpeed = 0.4;
+
     //hold position settings
     //TODO: set proper values based on encoder readouts.
-    
+    private double deviation = 10;
     private double HighPosition;
     private double MidPosition;
     private double LowPosition;
@@ -67,6 +71,37 @@ public class ArmSubsystem extends SubsystemBase{
     public void setArmStates(double value, int index)
     {
         this.armStates[index] = value;
+    }
+private double seekSpeed(double desiredPosition) {
+    double currentPosition = armEncoder.getPosition();
+    double outputSpeed = (desiredPosition - currentPosition) * 0.1;
+        if(outputSpeed < -maxSpeed) {
+            return -maxSpeed;
+        }
+        else if(outputSpeed > maxSpeed) {
+            return maxSpeed;
+        }
+        else if(outputSpeed > -minSpeed && outputSpeed < 0) {
+            return -minSpeed;
+        }
+        else if(outputSpeed < minSpeed && outputSpeed > 0) {
+            return minSpeed;
+        }
+        else {
+            return outputSpeed;
+        }
+}
+
+    public void armHold(double desiredPosition) {
+
+        if(Math.abs(armEncoder.getPosition() - desiredPosition) > deviation)
+        {
+            this.armStates[0] = seekSpeed(desiredPosition);
+        }
+        else
+        {
+            this.armStates[0] = 0;
+        }
     }
 
     @Override
