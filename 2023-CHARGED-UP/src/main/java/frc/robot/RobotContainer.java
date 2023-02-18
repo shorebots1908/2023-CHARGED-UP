@@ -76,9 +76,11 @@ public class RobotContainer {
             // No requirements because we don't need to interrupt anything
             .whenPressed(m_drivetrainSubsystem::zeroGyroscope);
     new Button(m_controller::getRightBumper)
-            .whenPressed(m_intakeSubsystem::intake);
+            .whenPressed(m_intakeSubsystem::intake)
+            .whenReleased(m_intakeSubsystem::intakeStop);
     new Button(m_controller::getLeftBumper)
-            .whenPressed(m_intakeSubsystem::intakeReverse);
+            .whenPressed(m_intakeSubsystem::intakeReverse)
+            .whenReleased(m_intakeSubsystem::intakeStop);
   }
 
   /**
