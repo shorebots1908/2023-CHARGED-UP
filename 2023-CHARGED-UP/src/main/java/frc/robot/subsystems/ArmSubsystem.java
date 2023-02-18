@@ -4,6 +4,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.motorcontrol.PWMTalonFX;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import com.revrobotics.*;
 
 public class ArmSubsystem extends SubsystemBase{
     private MotorController armMotor1 = new PWMTalonFX(13);
@@ -32,5 +34,11 @@ public class ArmSubsystem extends SubsystemBase{
     public void wristMove(double power) 
     {
         wristMotor1.set(wristSpeedLimit * power);
+    }
+
+    @Override 
+    public void periodic() {
+        SmartDashboard.putNumber("armMotor1", armMotor1.getEncoder());
+        SmartDashboard.putNumber("armMotor1", armMotor1);
     }
 }
