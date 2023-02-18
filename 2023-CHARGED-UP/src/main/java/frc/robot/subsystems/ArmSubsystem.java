@@ -5,20 +5,48 @@ import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.motorcontrol.PWMTalonFX;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import com.revrobotics.*;
+import com.revrobotics.CANSparkMax.IdleMode;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 public class ArmSubsystem extends SubsystemBase{
-    private MotorController armMotor1 = new PWMTalonFX(13);
-    private MotorController armMotor2 = new PWMTalonFX(14);
-    private MotorController wristMotor1 = new PWMTalonFX(15);
-    private double armSpeedLimit = 0.20;
-    private double wristSpeedLimit = 0.05;
+    //motor definitions
+    private CANSparkMax armMotor1 = new CANSparkMax(13, MotorType.kBrushless);
+    private CANSparkMax armMotor2 = new CANSparkMax(14, MotorType.kBrushless);
+    private CANSparkMax wristMotor1 = new CANSparkMax(15, MotorType.kBrushless);
+
+    //state management parameterd
+    private double armSpeedLimit = 0.25;
+    private double wristSpeedLimit = 0.25;
+    private double[] armStates = {0.0, 0.0};
+
+    //encoders
+    private RelativeEncoder armEncoder;
+    private RelativeEncoder wristEncoder;
+
+    //hold position settings
+    //TODO: set proper values based on encoder readouts.
+    
+    private double HighPosition;
+    private double MidPosition;
+    private double LowPosition;
+    private double StowPosition;
 
     private MotorControllerGroup armMotors = new MotorControllerGroup(armMotor1, armMotor2);
 
     public ArmSubsystem() 
     {
         armMotor1.setInverted(true);
+        wristMotor1.setIdleMode(IdleMode.kBrake);
+        armEncoder = armMotor1.getEncoder();
+        wristEncoder = wristMotor1.getEncoder();
+        SmartDashboard.putNumber("High Position", HighPosition);
+        SmartDashboard.putNumber("Middle Position", MidPosition);
+        SmartDashboard.putNumber("Lower Position", LowPosition);
+        SmartDashboard.putNumber("Stowed Position", StowPosition);
+
+
     }
 
     public void liftArm(double power) 
@@ -36,9 +64,20 @@ public class ArmSubsystem extends SubsystemBase{
         wristMotor1.set(wristSpeedLimit * power);
     }
 
-    @Override 
+    public void setArmStates(double value, int index)
+    {
+        this.armStates[index] = value;
+    }
+
+    @Override
     public void periodic() {
-        SmartDashboard.putNumber("armMotor1", armMotor1.getEncoder());
-        SmartDashboard.putNumber("armMotor1", armMotor1);
+        wristMove(this.armStates[1]);
+        liftArm(this.armStates[0]);
+        SmartDashboard.putNumber("armMotor1", armEncoder.getPosition());
+        SmartDashboard.putNumber("wristMotor1", wristEncoder.getPosition());
+        SmartDashboard.getNumber("High Position", HighPosition);
+        SmartDashboard.getNumber("Middle Position", MidPosition);
+        SmartDashboard.getNumber("Lower Position", LowPosition);
+        SmartDashboard.getNumber("Stowed Position", StowPosition);
     }
 }
