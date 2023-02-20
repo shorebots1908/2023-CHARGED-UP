@@ -16,6 +16,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.SPI;
@@ -174,7 +175,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     //  Remove if you are using a Pigeon
 //     return Rotation2d.fromDegrees(m_pigeon.getFusedHeading());
 
-    //  Uncomment if you are using a NavX
+//      Uncomment if you are using a NavX
    if (m_navx.isMagnetometerCalibrated()) {
      // We will only get valid fused headings if the magnetometer is calibrated
      return Rotation2d.fromDegrees(m_navx.getFusedHeading());
@@ -198,5 +199,16 @@ public class DrivetrainSubsystem extends SubsystemBase {
     m_frontRightModule.set(states[1].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[1].angle.getRadians());
     m_backLeftModule.set(states[2].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[2].angle.getRadians());
     m_backRightModule.set(states[3].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[3].angle.getRadians());
+
+    if (m_navx.isMagnetometerCalibrated()) {
+        SmartDashboard.putBoolean("NavX Magnetometer Calibrated", true);
+    }
+    else {
+        SmartDashboard.putBoolean("NavX Magnetometer Calibrated", false);
+    }
+    SmartDashboard.putNumber("Heading", m_navx.getYaw());
+    SmartDashboard.putNumber("Magneto Heading", m_navx.getFusedHeading());
+    SmartDashboard.putNumber("Nav Angle", m_navx.getAngle());
+
   }
 }
