@@ -12,6 +12,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 public class ArmSubsystem extends SubsystemBase{
     //motor definitions
+    
     private CANSparkMax armMotor1 = new CANSparkMax(13, MotorType.kBrushless);
     private CANSparkMax armMotor2 = new CANSparkMax(14, MotorType.kBrushless);
     private CANSparkMax wristMotor1 = new CANSparkMax(15, MotorType.kBrushless);
@@ -45,6 +46,10 @@ public class ArmSubsystem extends SubsystemBase{
         wristMotor1.setIdleMode(IdleMode.kBrake);
         armEncoder = armMotor1.getEncoder();
         wristEncoder = wristMotor1.getEncoder();
+        SmartDashboard.getNumber("High Position", HighPosition);
+        SmartDashboard.getNumber("Middle Position", MidPosition);
+        SmartDashboard.getNumber("Lower Position", LowPosition);
+        SmartDashboard.getNumber("Stowed Position", StowPosition);
         SmartDashboard.putNumber("High Position", HighPosition);
         SmartDashboard.putNumber("Middle Position", MidPosition);
         SmartDashboard.putNumber("Lower Position", LowPosition);
