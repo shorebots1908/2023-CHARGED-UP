@@ -8,13 +8,17 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.DefaultArmCommand;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.ArmSubsystem.WristState;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import frc.robot.subsystems.ArmSubsystem;
 
@@ -37,6 +41,7 @@ public class RobotContainer {
   //TODO: gyrostabilization
 
   private final XboxController m_controller = new XboxController(0);
+  private final CommandXboxController m_commandController = new CommandXboxController(0);
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -72,7 +77,7 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     // Back button zeros the gyroscope
-    new Button(m_controller::getBackButton)
+   /*  new Button(m_controller::getBackButton)
             // No requirements because we don't need to interrupt anything
             .whenPressed(m_drivetrainSubsystem::zeroGyroscope);
     new Button(m_controller::getRightBumper)
@@ -80,7 +85,27 @@ public class RobotContainer {
             .whenReleased(m_intakeSubsystem::intakeStop);
     new Button(m_controller::getLeftBumper)
             .whenPressed(m_intakeSubsystem::intakeReverse)
-            .whenReleased(m_intakeSubsystem::intakeStop);
+            .whenReleased(m_intakeSubsystem::intakeStop); */
+
+    m_commandController.back() // Back button zeros the gyroscope
+          .onTrue(Commands.runOnce(m_drivetrainSubsystem::zeroGyroscope));
+    m_commandController.rightBumper()
+          .onTrue(Commands.run(m_intakeSubsystem::intake))
+          .onFalse(Commands.run(m_intakeSubsystem::intakeStop));
+    m_commandController.leftBumper()
+          .onTrue(Commands.run(m_intakeSubsystem::intakeReverse))
+          .onFalse(Commands.run(m_intakeSubsystem::intakeStop));
+    
+    m_commandController.start()
+          .onTrue(Commands.run(m_ArmSubsystem::zeroWrist));
+    m_commandController.a()
+          .whileTrue(Commands.run(m_ArmSubsystem::wristUp));
+    m_commandController.b()
+          .whileTrue(Commands.run(m_ArmSubsystem::wristDown));
+    m_commandController.y()
+          .onTrue(Commands.runOnce(m_ArmSubsystem::setWristHoldPosition))
+          .whileTrue(Commands.run(m_ArmSubsystem::wristHold));
+    
   }
 
   /**

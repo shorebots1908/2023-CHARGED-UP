@@ -37,6 +37,7 @@ public class ArmSubsystem extends SubsystemBase{
     private double MidPosition;
     private double LowPosition;
     private double StowPosition;
+    private double wristHoldPostion = 0.0;
 
     private MotorControllerGroup armMotors = new MotorControllerGroup(armMotor1, armMotor2);
 
@@ -68,6 +69,26 @@ public class ArmSubsystem extends SubsystemBase{
         wristMotor1.set(wristSpeedLimit * power);
     }
 
+    public void wristUp(){ //Triggered by 'A' Button
+        wristMove(0.1);
+    }
+    
+    public void wristDown(){ //Triggered by 'B' Button
+        wristMove(-0.1);
+    }
+
+    public void setWristHoldPosition(){ //Triggered by 'Y' Button Once
+        wristHoldPostion = wristEncoder.getPosition();
+    }
+
+    public void wristHold(){ //Triggered by 'Y' Button while Held
+        if(Math.abs(armEncoder.getPosition() - wristHoldPostion) > deviation){
+            this.armStates[1] = seekSpeed(wristHoldPostion, wristEncoder.getPosition());
+        } else {
+            this.armStates[1] = 0;
+        }
+    }
+
     public void setArmStates(double value, int index){
         this.armStates[index] = value;
     }
@@ -76,8 +97,7 @@ public class ArmSubsystem extends SubsystemBase{
         wristEncoder.setPosition(0);
     }
 
-    private double seekSpeed(double desiredPosition) {
-        double currentPosition = armEncoder.getPosition();
+    private double seekSpeed(double desiredPosition, double currentPosition) {
         double outputSpeed = (desiredPosition - currentPosition) * 0.1;
         
         if(outputSpeed < -maxSpeed) {
@@ -100,7 +120,7 @@ public class ArmSubsystem extends SubsystemBase{
     public void armHold(double desiredPosition){
 
         if(Math.abs(armEncoder.getPosition() - desiredPosition) > deviation){
-            this.armStates[0] = seekSpeed(desiredPosition);
+            this.armStates[0] = seekSpeed(desiredPosition,armEncoder.getPosition());
         } else {
             this.armStates[0] = 0;
         }
