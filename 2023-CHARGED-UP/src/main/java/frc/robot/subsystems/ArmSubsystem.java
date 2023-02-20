@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import com.revrobotics.*;
 import com.revrobotics.CANSparkMax.IdleMode;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType; 
 
 public class ArmSubsystem extends SubsystemBase{
     //motor definitions
@@ -17,10 +17,20 @@ public class ArmSubsystem extends SubsystemBase{
     private CANSparkMax armMotor2 = new CANSparkMax(14, MotorType.kBrushless);
     private CANSparkMax wristMotor1 = new CANSparkMax(15, MotorType.kBrushless);
 
-    //state management parameterd
+    //state management parameters
     private double armSpeedLimit = 0.25;
     private double wristSpeedLimit = 0.25;
     private double[] armStates = {0.0, 0.0};
+    public enum ArmJoint {
+        Shoulder(0),
+        Wrist(1);
+
+        public final int value;
+
+        ArmJoint(int value) {
+            this.value = value;
+        }
+    }
 
     //encoders
     private RelativeEncoder armEncoder;
@@ -107,11 +117,11 @@ private double seekSpeed(double desiredPosition) {
 
         if(Math.abs(armEncoder.getPosition() - desiredPosition) > deviation)
         {
-            this.armStates[0] = seekSpeed(desiredPosition);
+            this.armStates[ArmJoint.Shoulder.value] = seekSpeed(desiredPosition);
         }
         else
         {
-            this.armStates[0] = 0;
+            this.armStates[ArmJoint.Shoulder.value] = 0;
         }
     }
 
@@ -119,11 +129,11 @@ private double seekSpeed(double desiredPosition) {
 
         if(Math.abs(wristEncoder.getPosition() - desiredPosition) > deviation)
         {
-            this.armStates[1] = seekSpeed(desiredPosition);
+            this.armStates[ArmJoint.Wrist.value] = seekSpeed(desiredPosition);
         } 
         else 
         {
-            this.armStates[1] = 0;
+            this.armStates[ArmJoint.Wrist.value] = 0;
         }
     }
 
@@ -133,13 +143,14 @@ private double seekSpeed(double desiredPosition) {
 
     @Override
     public void periodic() {
-        wristMove(this.armStates[1]);
-        liftArm(this.armStates[0]);
+        wristMove(this.armStates[ArmJoint.Wrist.value]);
+        liftArm(this.armStates[ArmJoint.Shoulder.value]);
         SmartDashboard.putNumber("armMotor1", armEncoder.getPosition());
         SmartDashboard.putNumber("wristMotor1", wristEncoder.getPosition());
         SmartDashboard.getNumber("High Position", HighPosition);
         SmartDashboard.getNumber("Middle Position", MidPosition);
         SmartDashboard.getNumber("Lower Position", LowPosition);
         SmartDashboard.getNumber("Stowed Position", StowPosition);
+        SmartDashboard.getNumber("Wrist Offset", wristOffset);
     }
 }
