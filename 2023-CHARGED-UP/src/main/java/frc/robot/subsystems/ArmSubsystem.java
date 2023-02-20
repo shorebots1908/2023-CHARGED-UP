@@ -37,6 +37,9 @@ public class ArmSubsystem extends SubsystemBase{
     private double MidPosition;
     private double LowPosition;
     private double StowPosition;
+    private double wristOffset;
+
+    private double motorRatios = 27.0 / 400.0;
 
     private MotorControllerGroup armMotors = new MotorControllerGroup(armMotor1, armMotor2);
 
@@ -50,11 +53,14 @@ public class ArmSubsystem extends SubsystemBase{
         SmartDashboard.getNumber("Middle Position", MidPosition);
         SmartDashboard.getNumber("Lower Position", LowPosition);
         SmartDashboard.getNumber("Stowed Position", StowPosition);
+
         SmartDashboard.putNumber("High Position", HighPosition);
         SmartDashboard.putNumber("Middle Position", MidPosition);
         SmartDashboard.putNumber("Lower Position", LowPosition);
         SmartDashboard.putNumber("Stowed Position", StowPosition);
 
+        SmartDashboard.getNumber("Wrist Offset", wristOffset);
+        SmartDashboard.putNumber("Wrist Offset", wristOffset);
 
     }
 
@@ -95,7 +101,7 @@ private double seekSpeed(double desiredPosition) {
         else {
             return outputSpeed;
         }
-}
+    }
 
     public void armHold(double desiredPosition) {
 
@@ -107,6 +113,22 @@ private double seekSpeed(double desiredPosition) {
         {
             this.armStates[0] = 0;
         }
+    }
+
+    public void wristHold(double desiredPosition) {
+
+        if(Math.abs(wristEncoder.getPosition() - desiredPosition) > deviation)
+        {
+            this.armStates[1] = seekSpeed(desiredPosition);
+        } 
+        else 
+        {
+            this.armStates[1] = 0;
+        }
+    }
+
+    public double offsetWristPosition() {
+        return (armEncoder.getPosition() - LowPosition) * motorRatios - wristOffset;
     }
 
     @Override
