@@ -11,8 +11,8 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 public class ArmSubsystem extends SubsystemBase{
+   
     //motor definitions
-    
     private CANSparkMax armMotor1 = new CANSparkMax(13, MotorType.kBrushless);
     private CANSparkMax armMotor2 = new CANSparkMax(14, MotorType.kBrushless);
     private CANSparkMax wristMotor1 = new CANSparkMax(15, MotorType.kBrushless);
@@ -40,8 +40,7 @@ public class ArmSubsystem extends SubsystemBase{
 
     private MotorControllerGroup armMotors = new MotorControllerGroup(armMotor1, armMotor2);
 
-    public ArmSubsystem() 
-    {
+    public ArmSubsystem(){
         armMotor1.setInverted(true);
         wristMotor1.setIdleMode(IdleMode.kBrake);
         armEncoder = armMotor1.getEncoder();
@@ -55,31 +54,32 @@ public class ArmSubsystem extends SubsystemBase{
         SmartDashboard.putNumber("Lower Position", LowPosition);
         SmartDashboard.putNumber("Stowed Position", StowPosition);
 
-
     }
 
-    public void liftArm(double power) 
-    {
+    public void liftArm(double power) {
         armMotors.set(armSpeedLimit * power);
     }
 
-    public void lowerArm(double power)
-    {
+    public void lowerArm(double power){
         armMotors.set(-armSpeedLimit * power);
     }
 
-    public void wristMove(double power) 
-    {
+    public void wristMove(double power){
         wristMotor1.set(wristSpeedLimit * power);
     }
 
-    public void setArmStates(double value, int index)
-    {
+    public void setArmStates(double value, int index){
         this.armStates[index] = value;
     }
-private double seekSpeed(double desiredPosition) {
-    double currentPosition = armEncoder.getPosition();
-    double outputSpeed = (desiredPosition - currentPosition) * 0.1;
+
+    public void zeroWrist(){
+        wristEncoder.setPosition(0);
+    }
+
+    private double seekSpeed(double desiredPosition) {
+        double currentPosition = armEncoder.getPosition();
+        double outputSpeed = (desiredPosition - currentPosition) * 0.1;
+        
         if(outputSpeed < -maxSpeed) {
             return -maxSpeed;
         }
@@ -95,22 +95,19 @@ private double seekSpeed(double desiredPosition) {
         else {
             return outputSpeed;
         }
-}
+    }
 
-    public void armHold(double desiredPosition) {
+    public void armHold(double desiredPosition){
 
-        if(Math.abs(armEncoder.getPosition() - desiredPosition) > deviation)
-        {
+        if(Math.abs(armEncoder.getPosition() - desiredPosition) > deviation){
             this.armStates[0] = seekSpeed(desiredPosition);
-        }
-        else
-        {
+        } else {
             this.armStates[0] = 0;
         }
     }
 
     @Override
-    public void periodic() {
+    public void periodic(){
         wristMove(this.armStates[1]);
         liftArm(this.armStates[0]);
         SmartDashboard.putNumber("armMotor1", armEncoder.getPosition());
