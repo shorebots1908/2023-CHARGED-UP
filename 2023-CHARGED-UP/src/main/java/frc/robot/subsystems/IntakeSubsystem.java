@@ -38,8 +38,6 @@ public class IntakeSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Intake Eject", intakeEject);
     }
 
-
-
     public void intake(){
 
         // if(m_ultrasonic.getRangeInches()>2){
