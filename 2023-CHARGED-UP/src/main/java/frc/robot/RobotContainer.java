@@ -38,7 +38,7 @@ public class RobotContainer {
   //TODO: use sensor to stop where pieces need to go
   //TODO: gyrostabilization
 
-  private final XboxController m_controller = new XboxController(0);
+  //private final XboxController m_controller = new XboxController(0);
   private final CommandXboxController m_commandController = new CommandXboxController(0);
 
   /**
@@ -52,15 +52,15 @@ public class RobotContainer {
     // Right stick X axis -> rotation
     m_drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(
             m_drivetrainSubsystem,
-            () -> -modifyAxis(rateLimit.calculate(m_controller.getLeftY()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND),
-            () -> -modifyAxis(m_controller.getLeftX()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
-            () -> -modifyAxis(m_controller.getRightX()) * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND
+            () -> -modifyAxis(rateLimit.calculate(m_commandController.getLeftY()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND),
+            () -> -modifyAxis(m_commandController.getLeftX()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
+            () -> -modifyAxis(m_commandController.getRightX()) * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND
     ));
 
     m_ArmSubsystem.setDefaultCommand(new DefaultArmCommand(m_ArmSubsystem,
-     () -> modifyAxis(m_controller.getRightTriggerAxis()),
-     () -> modifyAxis(m_controller.getLeftTriggerAxis()),
-     () -> modifyAxis(m_controller.getRightY())));
+     () -> modifyAxis(m_commandController.getRightTriggerAxis()),
+     () -> modifyAxis(m_commandController.getLeftTriggerAxis()),
+     () -> modifyAxis(m_commandController.getRightY())));
 
     // Configure the button bindings
     configureButtonBindings();
