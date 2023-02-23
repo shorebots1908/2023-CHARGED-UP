@@ -11,8 +11,8 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 public class ArmSubsystem extends SubsystemBase{
+   
     //motor definitions
-    
     private CANSparkMax armMotor1 = new CANSparkMax(13, MotorType.kBrushless);
     private CANSparkMax armMotor2 = new CANSparkMax(14, MotorType.kBrushless);
     private CANSparkMax wristMotor1 = new CANSparkMax(15, MotorType.kBrushless);
@@ -28,10 +28,10 @@ public class ArmSubsystem extends SubsystemBase{
             this.value = value;
         }
     }
+    
     private double armSpeedLimit = 0.25;
     private double wristSpeedLimit = 0.25;
     private double[] armStates = {0.0, 0.0};
-    private double ArmMiddle = this.armStates[3] = 4.54;
 
     //encoders
     private RelativeEncoder armEncoder;
@@ -40,7 +40,7 @@ public class ArmSubsystem extends SubsystemBase{
 
     private double minSpeed = 0.05;
     private double maxSpeed = 0.4;
-    
+
     //hold position settings
     //TODO: set proper values based on encoder readouts.
     private double motorRatios = 27.0 / 400.0;
@@ -50,7 +50,8 @@ public class ArmSubsystem extends SubsystemBase{
     private double LowPosition = 0;
     private double StowPosition = 0;
     private double wristOffset = 0;
-    private double CurrentHoldPosition;
+    private double currentHoldPosition;
+    private double wristHoldPostion;
     private boolean isHolding = false;
 
     private MotorControllerGroup armMotors = new MotorControllerGroup(armMotor1, armMotor2);
@@ -70,10 +71,13 @@ public class ArmSubsystem extends SubsystemBase{
         SmartDashboard.putNumber("Lower Position", LowPosition);
         SmartDashboard.putNumber("Stowed Position", StowPosition);
 
-
         SmartDashboard.getNumber("Wrist Offset", wristOffset);
-
         SmartDashboard.putNumber("Wrist Offset", wristOffset);
+    }
+
+    public void armHoldSet(double desiredPosition) {
+        isHolding = true;
+        currentHoldPosition = desiredPosition;
     }
 
     public double getHighPosition(){
@@ -104,14 +108,34 @@ public class ArmSubsystem extends SubsystemBase{
         wristMotor1.set(wristSpeedLimit * power);
     }
 
-    public void setArmStates(double value, int index)
-    {
+    public void wristUp(){ //Triggered by 'A' Button
+        wristMove(0.1);
+    }
+    
+    public void wristDown(){ //Triggered by 'B' Button
+        wristMove(-0.1);
+    }
+
+    public void setWristHoldPosition(){ //Triggered by 'Y' Button Once
+        wristHoldPostion = wristEncoder.getPosition();
+    }
+
+    public void wristHold(){ //Triggered by 'Y' Button while Held
+        if(Math.abs(wristEncoder.getPosition() - wristHoldPostion) > deviation){
+            this.armStates[1] = seekSpeed(wristHoldPostion);
+        } else {
+            this.armStates[1] = 0;
+        }
+    }
+
+    public void setArmStates(double value, int index){
         this.armStates[index] = value;
     }
 
     private double seekSpeed(double desiredPosition) {
-    double currentPosition = armEncoder.getPosition();
-    double outputSpeed = (desiredPosition - currentPosition) * 0.1;
+        double currentPosition = armEncoder.getPosition();
+        double outputSpeed = (desiredPosition - currentPosition) * 0.1;
+        
         if(outputSpeed < -maxSpeed) {
             return -maxSpeed;
         }
@@ -129,10 +153,8 @@ public class ArmSubsystem extends SubsystemBase{
         }
     }
 
-    public void armHoldSet(double desiredPosition){
-        isHolding = true;
-        CurrentHoldPosition = desiredPosition;
-
+    public void zeroWrist(){
+        wristEncoder.setPosition(0);
     }
 
     public void armHold(double desiredPosition) {
@@ -157,7 +179,7 @@ public class ArmSubsystem extends SubsystemBase{
         {
             this.armStates[ArmJoint.Wrist.value] = 0;
         }
-    }
+        }
 
     public double offsetWristPosition() {
         return (armEncoder.getPosition() - LowPosition) * motorRatios - wristOffset;
@@ -167,7 +189,6 @@ public class ArmSubsystem extends SubsystemBase{
     public void periodic() {
         wristMove(this.armStates[ArmJoint.Wrist.value]);
         liftArm(this.armStates[ArmJoint.Shoulder.value]);
-        armHold(4.54);
         SmartDashboard.putNumber("armMotor1", armEncoder.getPosition());
         SmartDashboard.putNumber("wristMotor1", wristEncoder.getPosition());
         SmartDashboard.getNumber("High Position", HighPosition);
