@@ -30,8 +30,9 @@ public class RobotContainer {
   private final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
   private final IntakeSubsystem m_intakeSubsystem = new IntakeSubsystem();
   private final ArmSubsystem m_ArmSubsystem = new ArmSubsystem();
-  private SlewRateLimiter rateLimit = new SlewRateLimiter(0.4);
+  private SlewRateLimiter rateLimit = new SlewRateLimiter(1.0);
   //TODO: Get wheels to rest in orientation.
+  //TODO: Add slew rate
   //TODO: account for gyroscope drift
   //TODO: use sensor to stop where pieces need to go
   //TODO: gyrostabilization
@@ -53,6 +54,8 @@ public class RobotContainer {
             () -> -modifyAxis(rateLimit.calculate(m_controller.getLeftX()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND),
             () -> -modifyAxis(rateLimit.calculate(m_controller.getRightX()) * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND)
     ));
+
+
 
     m_ArmSubsystem.setDefaultCommand(new DefaultArmCommand(m_ArmSubsystem,
      () -> modifyAxis(m_controller.getRightTriggerAxis()),
@@ -81,6 +84,17 @@ public class RobotContainer {
     new Button(m_controller::getLeftBumper)
             .whenPressed(m_intakeSubsystem::intakeReverse)
             .whenReleased(m_intakeSubsystem::intakeStop);
+    new Button(m_controller::getAButton)
+            .whenPressed(() -> {m_ArmSubsystem.armHoldSet(m_ArmSubsystem.getLowPosition());});
+    new Button(m_controller::getBButton)
+            .whenPressed(() -> {m_ArmSubsystem.armHoldSet(m_ArmSubsystem.getMidPosition());});
+    new Button(m_controller::getYButton)
+            .whenPressed(() -> {m_ArmSubsystem.armHoldSet(m_ArmSubsystem.getHighPosition());});
+    new Button(m_controller::getXButton)
+            .whenPressed(() -> {m_ArmSubsystem.armHoldSet(m_ArmSubsystem.getStowPosition());});
+
+
+
   }
 
   /**
@@ -109,8 +123,8 @@ public class RobotContainer {
     // Deadband
     value = deadband(value, 0.05);
 
-    // Square the axis and preserve negative or positive
-    value = Math.copySign((value * value), value);
+    // Square the axis
+    value = Math.copySign(value * value, value);
 
     return value;
   }
