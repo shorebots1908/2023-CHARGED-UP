@@ -9,6 +9,9 @@ public class DefaultArmCommand extends CommandBase {
     private final DoubleSupplier m_heightLiftRateSupplier;
     private final DoubleSupplier m_heightLowerRateSupplier;
     private final DoubleSupplier m_wristLiftRateSupplier;
+    private double wristInputPrevious = 0;
+    private double shoulderInputPrevious = 0;
+    private double shoulderInputPrevious2 = 0;
 
     public DefaultArmCommand(ArmSubsystem armSubsystem,
         DoubleSupplier heightLiftRateSupplier, 
@@ -27,35 +30,41 @@ public class DefaultArmCommand extends CommandBase {
     public void execute() 
     {
         double armInput = m_heightLiftRateSupplier.getAsDouble();
+        double armInput2 = m_heightLowerRateSupplier.getAsDouble();
         double wristInput = m_wristLiftRateSupplier.getAsDouble();
 
+        
         if(wristInput != 0)
         {
-            m_ArmSubsystem.setWristHolding(false);
+            m_ArmSubsystem.unsetWristHolding();
             m_ArmSubsystem.setArmStates(m_wristLiftRateSupplier.getAsDouble(), 1);
+            m_ArmSubsystem.setWristHoldPosition();
         }
         else
         {
-            m_ArmSubsystem.setWristHolding(true);
-            m_ArmSubsystem.setWristHoldPosition();
+            m_ArmSubsystem.setWristHolding();
         }
 
         if(armInput > 0)
         {
-            m_ArmSubsystem.setArmHolding(false);
+            m_ArmSubsystem.unsetArmHolding();
             m_ArmSubsystem.setArmStates(armInput, 0);
             m_ArmSubsystem.armHoldSet(m_ArmSubsystem.getArmPosition());
         }
-        else if(armInput < 0)
+        else if(armInput2 > 0)
         {
-            m_ArmSubsystem.setArmHolding(false);
+            m_ArmSubsystem.unsetArmHolding();
             m_ArmSubsystem.setArmStates(-(m_heightLowerRateSupplier.getAsDouble()), 0);
             m_ArmSubsystem.armHoldSet(m_ArmSubsystem.getArmPosition());
         }
         else
         {
-            m_ArmSubsystem.setArmHolding(true);
+            m_ArmSubsystem.setArmHolding();
         }
+
+        shoulderInputPrevious = armInput;
+        shoulderInputPrevious2 = armInput2;
+        wristInputPrevious = wristInput;
     }
 
     @Override
