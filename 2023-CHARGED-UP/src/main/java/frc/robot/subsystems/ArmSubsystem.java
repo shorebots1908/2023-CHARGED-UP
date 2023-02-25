@@ -52,7 +52,28 @@ public class ArmSubsystem extends SubsystemBase{
     private double wristOffset = 0;
     private double currentHoldPosition;
     private double wristHoldPostion;
-    private boolean isHolding = false;
+    private boolean armHolding = false;
+    private boolean wristHolding = false;
+
+    public boolean getWristHolding()
+    {
+        return wristHolding;
+    }
+
+    public void setWristHolding(boolean state)
+    {
+        wristHolding = state;
+    }
+
+    public boolean getArmHolding()
+    {
+        return armHolding;
+    }
+
+    public void setArmHolding(boolean state)
+    {
+        armHolding = state;
+    }
 
     private MotorControllerGroup armMotors = new MotorControllerGroup(armMotor1, armMotor2);
 
@@ -76,7 +97,7 @@ public class ArmSubsystem extends SubsystemBase{
     }
 
     public void armHoldSet(double desiredPosition) {
-        isHolding = true;
+        armHolding = true;
         currentHoldPosition = desiredPosition;
     }
 
@@ -187,8 +208,21 @@ public class ArmSubsystem extends SubsystemBase{
 
     @Override
     public void periodic() {
-        wristMove(this.armStates[ArmJoint.Wrist.value]);
-        liftArm(this.armStates[ArmJoint.Shoulder.value]);
+        if(wristHolding)
+        {
+
+        }
+
+
+        if(armHolding)
+        {
+            
+        }
+        else
+        {
+            liftArm(this.armStates[ArmJoint.Shoulder.value]);
+        }
+        wristHold();
         SmartDashboard.putNumber("armMotor1", armEncoder.getPosition());
         SmartDashboard.putNumber("wristMotor1", wristEncoder.getPosition());
         SmartDashboard.getNumber("High Position", HighPosition);
