@@ -85,13 +85,21 @@ public class RobotContainer {
             .whenPressed(m_intakeSubsystem::intakeReverse)
             .whenReleased(m_intakeSubsystem::intakeStop);
     new Button(m_controller::getAButton)
-            .whenPressed(() -> {m_ArmSubsystem.armHoldSet(m_ArmSubsystem.getLowPosition());});
+            .whenPressed(() -> {
+              m_ArmSubsystem.armHoldSet(m_ArmSubsystem.getLowPosition());
+              m_ArmSubsystem.setArmHolding(true);});
     new Button(m_controller::getBButton)
-            .whenPressed(() -> {m_ArmSubsystem.armHoldSet(m_ArmSubsystem.getMidPosition());});
+            .whenPressed(() -> {
+              m_ArmSubsystem.armHoldSet(m_ArmSubsystem.getMidPosition());
+              m_ArmSubsystem.setArmHolding(true);});
     new Button(m_controller::getYButton)
-            .whenPressed(() -> {m_ArmSubsystem.armHoldSet(m_ArmSubsystem.getHighPosition());});
+            .whenPressed(() -> {
+              m_ArmSubsystem.armHoldSet(m_ArmSubsystem.getHighPosition());
+              m_ArmSubsystem.setArmHolding(true);});
     new Button(m_controller::getXButton)
-            .whenPressed(() -> {m_ArmSubsystem.armHoldSet(m_ArmSubsystem.getStowPosition());});
+            .whenPressed(() -> {
+              m_ArmSubsystem.armHoldSet(m_ArmSubsystem.getStowPosition());
+              m_ArmSubsystem.setArmHolding(true);});
 
 
 

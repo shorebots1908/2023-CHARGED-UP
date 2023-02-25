@@ -97,7 +97,6 @@ public class ArmSubsystem extends SubsystemBase{
     }
 
     public void armHoldSet(double desiredPosition) {
-        armHolding = true;
         currentHoldPosition = desiredPosition;
     }
 
@@ -139,6 +138,14 @@ public class ArmSubsystem extends SubsystemBase{
 
     public void setWristHoldPosition(){ //Triggered by 'Y' Button Once
         wristHoldPostion = wristEncoder.getPosition();
+    }
+
+    public double getWristPosition(){
+        return wristEncoder.getPosition();
+    }
+
+    public double getArmPosition(){
+        return armEncoder.getPosition();
     }
 
     public void wristHold(){ //Triggered by 'Y' Button while Held
@@ -200,7 +207,7 @@ public class ArmSubsystem extends SubsystemBase{
         {
             this.armStates[ArmJoint.Wrist.value] = 0;
         }
-        }
+    }
 
     public double offsetWristPosition() {
         return (armEncoder.getPosition() - LowPosition) * motorRatios - wristOffset;
@@ -210,19 +217,22 @@ public class ArmSubsystem extends SubsystemBase{
     public void periodic() {
         if(wristHolding)
         {
-
+            wristHold();
         }
-
+        else
+        {
+            wristMove(this.armStates[ArmJoint.Wrist.value]);
+        }
 
         if(armHolding)
         {
-            
+            armHold(currentHoldPosition);
         }
         else
         {
             liftArm(this.armStates[ArmJoint.Shoulder.value]);
         }
-        wristHold();
+        
         SmartDashboard.putNumber("armMotor1", armEncoder.getPosition());
         SmartDashboard.putNumber("wristMotor1", wristEncoder.getPosition());
         SmartDashboard.getNumber("High Position", HighPosition);

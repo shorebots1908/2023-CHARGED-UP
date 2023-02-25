@@ -20,21 +20,42 @@ public class DefaultArmCommand extends CommandBase {
         this.m_heightLowerRateSupplier = heightLowerRateSupplier;
         this.m_wristLiftRateSupplier = wristLiftRateSupplier;
 
-
         addRequirements(armSubsystem);
     }
     
     @Override
     public void execute() 
     {
-        double liftInput = m_heightLiftRateSupplier.getAsDouble();
-        if(liftInput > 0){
-            m_ArmSubsystem.setArmStates(liftInput, 0);
+        double armInput = m_heightLiftRateSupplier.getAsDouble();
+        double wristInput = m_wristLiftRateSupplier.getAsDouble();
+
+        if(wristInput != 0)
+        {
+            m_ArmSubsystem.setWristHolding(false);
+            m_ArmSubsystem.setArmStates(m_wristLiftRateSupplier.getAsDouble(), 1);
         }
-        else {
+        else
+        {
+            m_ArmSubsystem.setWristHolding(true);
+            m_ArmSubsystem.setWristHoldPosition();
+        }
+
+        if(armInput > 0)
+        {
+            m_ArmSubsystem.setArmHolding(false);
+            m_ArmSubsystem.setArmStates(armInput, 0);
+            m_ArmSubsystem.armHoldSet(m_ArmSubsystem.getArmPosition());
+        }
+        else if(armInput < 0)
+        {
+            m_ArmSubsystem.setArmHolding(false);
             m_ArmSubsystem.setArmStates(-(m_heightLowerRateSupplier.getAsDouble()), 0);
+            m_ArmSubsystem.armHoldSet(m_ArmSubsystem.getArmPosition());
         }
-        m_ArmSubsystem.setArmStates(m_wristLiftRateSupplier.getAsDouble(), 1);
+        else
+        {
+            m_ArmSubsystem.setArmHolding(true);
+        }
     }
 
     @Override
