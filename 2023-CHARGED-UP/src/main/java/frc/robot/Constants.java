@@ -18,14 +18,14 @@ public final class Constants {
     public static final class Swerve {
         public static final Port nav_X_ID = SPI.Port.kMXP;
         public static final int pigeonID = 1;
-        public static final boolean invertGyro = false; // Always ensure Gyro is CCW+ CW-
+        public static final boolean invertGyro = true; // Always ensure Gyro is CCW+ CW-
 
         public static final COTSFalconSwerveConstants chosenModule =  //TODO: This must be tuned to specific robot
-            COTSFalconSwerveConstants.SDSMK4i(COTSFalconSwerveConstants.driveGearRatios.SDSMK3_Standard);
+            COTSFalconSwerveConstants.SDSMK3(COTSFalconSwerveConstants.driveGearRatios.SDSMK3_Standard);
 
         /* Drivetrain Constants */
-        public static final double trackWidth = Units.inchesToMeters(23.47); //TODO: This must be tuned to specific robot
-        public static final double wheelBase = Units.inchesToMeters(17.25); //TODO: This must be tuned to specific robot
+        public static final double trackWidth = Units.inchesToMeters(17.25); //TODO: This must be tuned to specific robot
+        public static final double wheelBase = Units.inchesToMeters(23.47); //TODO: This must be tuned to specific robot
         public static final double wheelCircumference = chosenModule.wheelCircumference;
 
         /* Swerve Kinematics 
@@ -97,7 +97,7 @@ public final class Constants {
             public static final int driveMotorID = 2;
             public static final int angleMotorID = 1;
             public static final int canCoderID = 9;
-            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(63.28);
+            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(64.29);
             public static final SwerveModuleConstants constants = 
                 new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
         }
@@ -107,7 +107,7 @@ public final class Constants {
             public static final int driveMotorID = 4;
             public static final int angleMotorID = 3;
             public static final int canCoderID = 10;
-            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(40.34);
+            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(40.2);
             public static final SwerveModuleConstants constants = 
                 new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
         }
@@ -117,7 +117,7 @@ public final class Constants {
             public static final int driveMotorID = 6;
             public static final int angleMotorID = 5;
             public static final int canCoderID = 11;
-            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(77.90);
+            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(78.17);
             public static final SwerveModuleConstants constants = 
                 new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
         }
@@ -127,7 +127,7 @@ public final class Constants {
             public static final int driveMotorID = 8;
             public static final int angleMotorID = 7;
             public static final int canCoderID = 12;
-            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(175.82);
+            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(175.69);
             public static final SwerveModuleConstants constants = 
                 new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
         }
