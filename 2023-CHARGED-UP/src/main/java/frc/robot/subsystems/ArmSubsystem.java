@@ -45,10 +45,10 @@ public class ArmSubsystem extends SubsystemBase{
     private double motorRatios = 27.0 / 400.0;
     private double shoulderDeviation = 1;
     private double wristDeviation = 0.2;
-    private double HighPosition = 50;
-    private double MidPosition = 25;
-    private double LowPosition = 0;
-    private double StowPosition = 0;
+    private double[] HighPosition = {137, 11.45};
+    private double[] MidPosition = {120.8, 11};
+    private double[] LowPosition = {24.7, 5.5};
+    private double[] StowPosition = {0, 0};
     private double wristOffset = 0;
     private double currentHoldPosition;
     private double wristHoldPosition;
@@ -95,14 +95,14 @@ public class ArmSubsystem extends SubsystemBase{
         wristMotor1.setIdleMode(IdleMode.kBrake);
         armEncoder = armMotor1.getEncoder();
         wristEncoder = wristMotor1.getEncoder();
-        StowPosition = SmartDashboard.getNumber("Stowed Position", StowPosition);
-        HighPosition = SmartDashboard.getNumber("High Position", 50);
-        MidPosition = SmartDashboard.getNumber("Middle Position", 25);
-        LowPosition = SmartDashboard.getNumber("Lower Position", 0);
-        SmartDashboard.putNumber("High Position", HighPosition);
-        SmartDashboard.putNumber("Middle Position", MidPosition);
-        SmartDashboard.putNumber("Lower Position", LowPosition);
-        SmartDashboard.putNumber("Stowed Position", StowPosition);
+        StowPosition[0] = SmartDashboard.getNumber("Stowed Position", StowPosition[0]);
+        HighPosition[0] = SmartDashboard.getNumber("High Position", HighPosition[0]);
+        MidPosition[0] = SmartDashboard.getNumber("Middle Position", MidPosition[0]);
+        LowPosition[0] = SmartDashboard.getNumber("Lower Position", LowPosition[0]);
+        SmartDashboard.putNumber("High Position", HighPosition[0]);
+        SmartDashboard.putNumber("Middle Position", MidPosition[0]);
+        SmartDashboard.putNumber("Lower Position", LowPosition[0]);
+        SmartDashboard.putNumber("Stowed Position", StowPosition[0]);
 
         wristOffset = SmartDashboard.getNumber("Wrist Offset", wristOffset);
         SmartDashboard.putNumber("Wrist Offset", wristOffset);
@@ -113,17 +113,17 @@ public class ArmSubsystem extends SubsystemBase{
         currentHoldPosition = desiredPosition;
     }
 
-    public double getHighPosition(){
-        return HighPosition;
+    public double getHighPosition(int index){
+        return HighPosition[index];
     }
-    public double getMidPosition(){
-        return MidPosition;
+    public double getMidPosition(int index){
+        return MidPosition[index];
     }
-    public double getLowPosition(){
-        return LowPosition;
+    public double getLowPosition(int index){
+        return LowPosition[index];
     }
-    public double getStowPosition(){
-        return StowPosition;
+    public double getStowPosition(int index){
+        return StowPosition[index];
     }
 
     public void liftArm(double power) 
@@ -221,10 +221,6 @@ public class ArmSubsystem extends SubsystemBase{
         }
     }
 
-    public double offsetWristPosition() {
-        return (armEncoder.getPosition() - LowPosition) * motorRatios - wristOffset;
-    }
-
     @Override
     public void periodic() {
         shoulderPosition = armEncoder.getPosition();
@@ -244,10 +240,10 @@ public class ArmSubsystem extends SubsystemBase{
         
         SmartDashboard.putNumber("armMotor1", armEncoder.getPosition());
         SmartDashboard.putNumber("wristMotor1", wristEncoder.getPosition());
-        StowPosition = SmartDashboard.getNumber("Stowed Position", StowPosition);
-        HighPosition = SmartDashboard.getNumber("High Position", HighPosition);
-        MidPosition = SmartDashboard.getNumber("Middle Position", MidPosition);
-        LowPosition = SmartDashboard.getNumber("Lower Position", LowPosition);
+        StowPosition[0] = SmartDashboard.getNumber("Stowed Position", StowPosition[0]);
+        HighPosition[0] = SmartDashboard.getNumber("High Position", HighPosition[0]);
+        MidPosition[0] = SmartDashboard.getNumber("Middle Position", MidPosition[0]);
+        LowPosition[0] = SmartDashboard.getNumber("Lower Position", LowPosition[0]);
         SmartDashboard.putBoolean("Arm Hold", armHolding);
         SmartDashboard.putBoolean("Wrist Holding", wristHolding);
         oldShoulderPosition = shoulderPosition;

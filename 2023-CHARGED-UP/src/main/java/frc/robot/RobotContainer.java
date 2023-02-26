@@ -51,7 +51,7 @@ public class RobotContainer {
   private final IntakeSubsystem m_intakeSubsystem = new IntakeSubsystem();
   private final ArmSubsystem m_ArmSubsystem = new ArmSubsystem();
   private final Swerve s_Swerve = new Swerve();
-  private SlewRateLimiter rateLimit = new SlewRateLimiter(.2);
+  private int speedMode = 2;
   //TODO: Get wheels to rest in orientation. STill needed?
   //TODO: add slew rate to new swerve
   //TODO: account for gyroscope drift
@@ -70,9 +70,9 @@ public class RobotContainer {
     s_Swerve.setDefaultCommand(
         new TeleopSwerve(
             s_Swerve, 
-            () -> rateLimit.calculate(-m_controller.getRawAxis(translationAxis)), 
-            () -> rateLimit.calculate(-m_controller.getRawAxis(strafeAxis)), 
-            () -> rateLimit.calculate(-m_controller.getRawAxis(rotationAxis)), 
+            () -> -m_controller.getRawAxis(translationAxis) * s_Swerve.speedScalar(speedMode), 
+            () -> -m_controller.getRawAxis(strafeAxis) * s_Swerve.speedScalar(speedMode), 
+            () -> -m_controller.getRawAxis(rotationAxis) * s_Swerve.speedScalar(speedMode), 
             () -> robotCentric.getAsBoolean()
         )
     );    
@@ -110,24 +110,34 @@ public class RobotContainer {
         m_intakeSubsystem));
     m_XBoxController.a()
       .onTrue(Commands.runOnce(() -> {
-        m_ArmSubsystem.armHoldSet(m_ArmSubsystem.getLowPosition());
+        m_ArmSubsystem.armHoldSet(m_ArmSubsystem.getLowPosition(0));
+        m_ArmSubsystem.wristHold(m_ArmSubsystem.getLowPosition(1));
         m_ArmSubsystem.setArmHolding();
       }));
     m_XBoxController.b()
       .onTrue(Commands.runOnce(() -> {
-        m_ArmSubsystem.armHoldSet(m_ArmSubsystem.getMidPosition());
+        m_ArmSubsystem.armHoldSet(m_ArmSubsystem.getMidPosition(0));
+        m_ArmSubsystem.wristHold(m_ArmSubsystem.getMidPosition(1));
         m_ArmSubsystem.setArmHolding();
       }));
     m_XBoxController.x()
       .onTrue(Commands.runOnce(() -> {
-        m_ArmSubsystem.armHoldSet(m_ArmSubsystem.getStowPosition());
+        m_ArmSubsystem.armHoldSet(m_ArmSubsystem.getStowPosition(0));
+        m_ArmSubsystem.wristHold(m_ArmSubsystem.getStowPosition(1));
         m_ArmSubsystem.setArmHolding();
       }));
     m_XBoxController.y()
       .onTrue(Commands.runOnce(() -> {
-        m_ArmSubsystem.armHoldSet(m_ArmSubsystem.getHighPosition());
+        m_ArmSubsystem.armHoldSet(m_ArmSubsystem.getHighPosition(0));
+        m_ArmSubsystem.wristHold(m_ArmSubsystem.getHighPosition(1));
         m_ArmSubsystem.setArmHolding();
       }));
+      m_XBoxController.povUp()
+        .onTrue(Commands.runOnce(() -> {speedMode = 0;}));
+      m_XBoxController.povRight()
+        .onTrue(Commands.runOnce(() -> {speedMode = 1;}));
+      m_XBoxController.povDown()
+        .onTrue(Commands.runOnce(() -> {speedMode = 2;}));
   }
 
   /**

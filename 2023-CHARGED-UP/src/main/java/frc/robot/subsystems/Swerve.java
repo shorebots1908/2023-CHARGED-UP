@@ -24,7 +24,7 @@ public class Swerve extends SubsystemBase {
     public SwerveModule[] mSwerveMods;
     //TODO: Swap out navx for pigeon.
     public AHRS gyro;
-    
+    private double[] speedScale = {1, 0.75, .5};
 
     public Swerve() {
         gyro = new AHRS(Constants.Swerve.nav_X_ID, (byte) 200);
@@ -45,6 +45,10 @@ public class Swerve extends SubsystemBase {
         resetModulesToAbsolute();
 
         swerveOdometry = new SwerveDriveOdometry(Constants.Swerve.swerveKinematics, getYaw(), getModulePositions());
+    }
+
+    public double speedScalar(int index) {
+        return speedScale[index];
     }
 
     public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
