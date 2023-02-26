@@ -51,9 +51,11 @@ public class ArmSubsystem extends SubsystemBase{
     private double StowPosition = 0;
     private double wristOffset = 0;
     private double currentHoldPosition;
-    private double wristHoldPostion;
+    private double wristHoldPosition;
     private boolean armHolding = false;
     private boolean wristHolding = false;
+    private double shoulderPosition;
+    private double oldShoulderPosition;
 
     public boolean getWristHolding()
     {
@@ -104,6 +106,7 @@ public class ArmSubsystem extends SubsystemBase{
 
         SmartDashboard.getNumber("Wrist Offset", wristOffset);
         SmartDashboard.putNumber("Wrist Offset", wristOffset);
+        oldShoulderPosition = armEncoder.getPosition();
     }
 
     public void armHoldSet(double desiredPosition) {
@@ -147,7 +150,7 @@ public class ArmSubsystem extends SubsystemBase{
     }
 
     public void setWristHoldPosition(){ //Triggered by 'Y' Button Once
-        wristHoldPostion = wristEncoder.getPosition();
+        wristHoldPosition = wristEncoder.getPosition();
     }
 
     public double getWristPosition(){
@@ -159,8 +162,8 @@ public class ArmSubsystem extends SubsystemBase{
     }
 
     public void wristHold(){ //Triggered by 'Y' Button while Held
-        if(Math.abs(wristEncoder.getPosition() - wristHoldPostion) > wristDeviation){
-            this.armStates[1] = seekSpeed(wristHoldPostion, wristEncoder.getPosition());
+        if(Math.abs(wristEncoder.getPosition() - wristHoldPosition) > wristDeviation){
+            this.armStates[1] = seekSpeed(wristHoldPosition, wristEncoder.getPosition());
         } else {
             this.armStates[1] = 0;
         }
@@ -224,9 +227,12 @@ public class ArmSubsystem extends SubsystemBase{
 
     @Override
     public void periodic() {
+        shoulderPosition = armEncoder.getPosition();
+
         if(wristHolding)
         {
-            wristHold(wristHoldPostion);
+            wristHoldPosition += (shoulderPosition - oldShoulderPosition) * motorRatios;
+            wristHold(wristHoldPosition);
         }
         wristMove(this.armStates[ArmJoint.Wrist.value]);
 
@@ -248,5 +254,7 @@ public class ArmSubsystem extends SubsystemBase{
         SmartDashboard.putNumber("Stowed Position", StowPosition);
         SmartDashboard.putBoolean("Arm Hold", armHolding);
         SmartDashboard.putBoolean("Wrist Holding", wristHolding);
+        oldShoulderPosition = shoulderPosition;
+
     }
 }
