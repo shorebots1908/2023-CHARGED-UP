@@ -93,16 +93,16 @@ public class ArmSubsystem extends SubsystemBase{
         wristMotor1.setIdleMode(IdleMode.kBrake);
         armEncoder = armMotor1.getEncoder();
         wristEncoder = wristMotor1.getEncoder();
-        SmartDashboard.getNumber("High Position", HighPosition);
-        SmartDashboard.getNumber("Middle Position", MidPosition);
-        SmartDashboard.getNumber("Lower Position", LowPosition);
-        SmartDashboard.getNumber("Stowed Position", StowPosition);
+        StowPosition = SmartDashboard.getNumber("Stowed Position", StowPosition);
+        HighPosition = SmartDashboard.getNumber("High Position", 50);
+        MidPosition = SmartDashboard.getNumber("Middle Position", 25);
+        LowPosition = SmartDashboard.getNumber("Lower Position", 0);
         SmartDashboard.putNumber("High Position", HighPosition);
         SmartDashboard.putNumber("Middle Position", MidPosition);
         SmartDashboard.putNumber("Lower Position", LowPosition);
         SmartDashboard.putNumber("Stowed Position", StowPosition);
 
-        SmartDashboard.getNumber("Wrist Offset", wristOffset);
+        wristOffset = SmartDashboard.getNumber("Wrist Offset", wristOffset);
         SmartDashboard.putNumber("Wrist Offset", wristOffset);
     }
 
@@ -171,7 +171,7 @@ public class ArmSubsystem extends SubsystemBase{
     }
 
     private double seekSpeed(double desiredPosition, double currentPosition) {
-        double outputSpeed = (desiredPosition - currentPosition) * 0.1;
+        double outputSpeed = (desiredPosition - currentPosition) * 0.3  ;
         
         if(outputSpeed < -maxSpeed) {
             return -maxSpeed;
@@ -238,14 +238,10 @@ public class ArmSubsystem extends SubsystemBase{
         
         SmartDashboard.putNumber("armMotor1", armEncoder.getPosition());
         SmartDashboard.putNumber("wristMotor1", wristEncoder.getPosition());
-        SmartDashboard.getNumber("High Position", HighPosition);
-        SmartDashboard.getNumber("Middle Position", MidPosition);
-        SmartDashboard.getNumber("Lower Position", LowPosition);
-        SmartDashboard.getNumber("Stowed Position", StowPosition);
-        SmartDashboard.putNumber("High Position", HighPosition);
-        SmartDashboard.putNumber("Middle Position", MidPosition);
-        SmartDashboard.putNumber("Lower Position", LowPosition);
-        SmartDashboard.putNumber("Stowed Position", StowPosition);
+        StowPosition = SmartDashboard.getNumber("Stowed Position", StowPosition);
+        HighPosition = SmartDashboard.getNumber("High Position", HighPosition);
+        MidPosition = SmartDashboard.getNumber("Middle Position", MidPosition);
+        LowPosition = SmartDashboard.getNumber("Lower Position", LowPosition);
         SmartDashboard.putBoolean("Arm Hold", armHolding);
         SmartDashboard.putBoolean("Wrist Holding", wristHolding);
     }

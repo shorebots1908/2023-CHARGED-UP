@@ -50,7 +50,7 @@ public class RobotContainer {
   private final IntakeSubsystem m_intakeSubsystem = new IntakeSubsystem();
   private final ArmSubsystem m_ArmSubsystem = new ArmSubsystem();
   private final Swerve s_Swerve = new Swerve();
-  private SlewRateLimiter rateLimit = new SlewRateLimiter(1.0);
+  private SlewRateLimiter rateLimit = new SlewRateLimiter(.2);
   //TODO: Get wheels to rest in orientation. STill needed?
   //TODO: add slew rate to new swerve
   //TODO: account for gyroscope drift
@@ -72,9 +72,9 @@ public class RobotContainer {
     s_Swerve.setDefaultCommand(
         new TeleopSwerve(
             s_Swerve, 
-            () -> -driver.getRawAxis(translationAxis), 
-            () -> -driver.getRawAxis(strafeAxis), 
-            () -> -driver.getRawAxis(rotationAxis), 
+            () -> rateLimit.calculate(-driver.getRawAxis(translationAxis)), 
+            () -> rateLimit.calculate(-driver.getRawAxis(strafeAxis)), 
+            () -> rateLimit.calculate(-driver.getRawAxis(rotationAxis)), 
             () -> robotCentric.getAsBoolean()
         )
     );    
