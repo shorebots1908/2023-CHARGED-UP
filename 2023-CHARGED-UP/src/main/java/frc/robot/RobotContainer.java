@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -20,6 +21,8 @@ import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.Swerve;
+import frc.robot.commands.*;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -28,13 +31,27 @@ import frc.robot.subsystems.ArmSubsystem;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
+
+  /* Controllers */
+  private final XboxController driver = new XboxController(0);
+
+  /* Drive Controls */
+  private final int translationAxis = XboxController.Axis.kLeftY.value;
+  private final int strafeAxis = XboxController.Axis.kLeftX.value;
+  private final int rotationAxis = XboxController.Axis.kRightX.value;
+
+  /* Driver Buttons */
+  private final JoystickButton zeroGyro = new JoystickButton(driver, XboxController.Button.kBack.value);
+  private final JoystickButton robotCentric = new JoystickButton(driver, XboxController.Button.kLeftBumper.value);
+
   // The robot's subsystems and commands are defined here...
-  private final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
+  //private final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
   private final IntakeSubsystem m_intakeSubsystem = new IntakeSubsystem();
   private final ArmSubsystem m_ArmSubsystem = new ArmSubsystem();
+  private final Swerve s_Swerve = new Swerve();
   private SlewRateLimiter rateLimit = new SlewRateLimiter(1.0);
-  //TODO: Get wheels to rest in orientation.
-  //TODO: Add slew rate
+  //TODO: Get wheels to rest in orientation. STill needed?
+  //TODO: add slew rate to new swerve
   //TODO: account for gyroscope drift
   //TODO: use sensor to stop where pieces need to go
   //TODO: gyrostabilizationf
@@ -57,6 +74,15 @@ public class RobotContainer {
             () -> -modifyAxis(rateLimit.calculate(m_controller.getRightX()) * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND)
     ));
 
+    s_Swerve.setDefaultCommand(
+        new TeleopSwerve(
+            s_Swerve, 
+            () -> -driver.getRawAxis(translationAxis), 
+            () -> -driver.getRawAxis(strafeAxis), 
+            () -> -driver.getRawAxis(rotationAxis), 
+            () -> robotCentric.getAsBoolean()
+        )
+    );    
 
 
     m_ArmSubsystem.setDefaultCommand(new DefaultArmCommand(m_ArmSubsystem,
@@ -79,7 +105,8 @@ public class RobotContainer {
     // Back button zeros the gyroscope
     new Button(m_controller::getBackButton)
             // No requirements because we don't need to interrupt anything
-            .whenPressed(Commands.runOnce(m_drivetrainSubsystem::zeroGyroscope));
+
+            .whenPressed(Commands.runOnce(s_Swerve::zeroGyro));
     new Button(m_controller::getRightBumper)
             .whenPressed(m_intakeSubsystem::intake)
             .whenReleased(m_intakeSubsystem::intakeStop);
