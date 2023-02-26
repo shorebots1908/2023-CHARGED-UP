@@ -34,7 +34,8 @@ import frc.robot.commands.*;
 public class RobotContainer {
 
   /* Controllers */
-  private final XboxController driver = new XboxController(0);
+  private final XboxController m_controller = new XboxController(0);
+  private final CommandXboxController m_XBoxController = new CommandXboxController(0);
 
   /* Drive Controls */
   private final int translationAxis = XboxController.Axis.kLeftY.value;
@@ -42,8 +43,8 @@ public class RobotContainer {
   private final int rotationAxis = XboxController.Axis.kRightX.value;
 
   /* Driver Buttons */
-  private final JoystickButton zeroGyro = new JoystickButton(driver, XboxController.Button.kBack.value);
-  private final JoystickButton robotCentric = new JoystickButton(driver, XboxController.Button.kLeftBumper.value);
+  private final JoystickButton zeroGyro = new JoystickButton(m_controller, XboxController.Button.kBack.value);
+  private final JoystickButton robotCentric = new JoystickButton(m_controller, XboxController.Button.kLeftBumper.value);
 
   // The robot's subsystems and commands are defined here...
   //private final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
@@ -56,9 +57,6 @@ public class RobotContainer {
   //TODO: account for gyroscope drift
   //TODO: use sensor to stop where pieces need to go
   //TODO: gyrostabilizationf
-
-  private final XboxController m_controller = new XboxController(0);
-  private final CommandXboxController m_XBoxController = new CommandXboxController(0);
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -72,9 +70,9 @@ public class RobotContainer {
     s_Swerve.setDefaultCommand(
         new TeleopSwerve(
             s_Swerve, 
-            () -> rateLimit.calculate(-driver.getRawAxis(translationAxis)), 
-            () -> rateLimit.calculate(-driver.getRawAxis(strafeAxis)), 
-            () -> rateLimit.calculate(-driver.getRawAxis(rotationAxis)), 
+            () -> rateLimit.calculate(-m_controller.getRawAxis(translationAxis)), 
+            () -> rateLimit.calculate(-m_controller.getRawAxis(strafeAxis)), 
+            () -> rateLimit.calculate(-m_controller.getRawAxis(rotationAxis)), 
             () -> robotCentric.getAsBoolean()
         )
     );    
