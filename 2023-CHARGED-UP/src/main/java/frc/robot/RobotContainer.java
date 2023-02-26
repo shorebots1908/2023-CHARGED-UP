@@ -96,32 +96,18 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     // Back button zeros the gyroscope
-    new Button(m_controller::getBackButton)
-            // No requirements because we don't need to interrupt anything
-
-            .whenPressed(Commands.runOnce(s_Swerve::zeroGyro));
-    new Button(m_controller::getRightBumper)
-            .whenPressed(m_intakeSubsystem::intake)
-            .whenReleased(m_intakeSubsystem::intakeStop);
-    new Button(m_controller::getLeftBumper)
-            .whenPressed(m_intakeSubsystem::intakeReverse)
-            .whenReleased(m_intakeSubsystem::intakeStop);
-    // new Button(m_controller::getAButton)
-    //         .whenPressed(() -> {
-    //           m_ArmSubsystem.armHoldSet(m_ArmSubsystem.getLowPosition());
-    //           m_ArmSubsystem.setArmHolding(true);});
-    // new Button(m_controller::getBButton)
-    //         .whenPressed(() -> {
-    //           m_ArmSubsystem.armHoldSet(m_ArmSubsystem.getMidPosition());
-    //           m_ArmSubsystem.setArmHolding(true);});
-    // new Button(m_controller::getYButton)
-    //         .whenPressed(() -> {
-    //           m_ArmSubsystem.armHoldSet(m_ArmSubsystem.getHighPosition());
-    //           m_ArmSubsystem.setArmHolding(true);});
-    // new Button(m_controller::getXButton)
-    //         .whenPressed(() -> {
-    //           m_ArmSubsystem.armHoldSet(m_ArmSubsystem.getStowPosition());
-    //           m_ArmSubsystem.setArmHolding(true);});
+    m_XBoxController.back()
+      .onTrue(Commands.runOnce(s_Swerve:: zeroGyro));
+    m_XBoxController.rightBumper()
+      .whileTrue(Commands.startEnd(
+        m_intakeSubsystem::intake, 
+        m_intakeSubsystem::intakeStop, 
+        m_intakeSubsystem));
+    m_XBoxController.leftBumper()
+      .whileTrue(Commands.startEnd(
+        m_intakeSubsystem::intakeReverse,
+        m_intakeSubsystem::intakeStop,
+        m_intakeSubsystem));
     m_XBoxController.a()
       .onTrue(Commands.runOnce(() -> {
         m_ArmSubsystem.armHoldSet(m_ArmSubsystem.getLowPosition());
