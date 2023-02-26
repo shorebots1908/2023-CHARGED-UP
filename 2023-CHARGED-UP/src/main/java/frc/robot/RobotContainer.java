@@ -9,10 +9,12 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.DefaultArmCommand;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.subsystems.DrivetrainSubsystem;
@@ -52,10 +54,10 @@ public class RobotContainer {
   //TODO: add slew rate to new swerve
   //TODO: account for gyroscope drift
   //TODO: use sensor to stop where pieces need to go
-  //TODO: gyrostabilization
+  //TODO: gyrostabilizationf
 
   private final XboxController m_controller = new XboxController(0);
-
+  private final CommandXboxController m_XBoxController = new CommandXboxController(0);
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -65,12 +67,12 @@ public class RobotContainer {
     // Left stick Y axis -> forward and backwards movement
     // Left stick X axis -> left and right movement
     // Right stick X axis -> rotation
-    // m_drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(
-    //         m_drivetrainSubsystem,
-    //         () -> -modifyAxis(rateLimit.calculate(m_controller.getLeftY()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND),
-    //         () -> -modifyAxis(m_controller.getLeftX()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
-    //         () -> -modifyAxis(m_controller.getRightX()) * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND
-    // ));
+    m_drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(
+            m_drivetrainSubsystem,
+            () -> -modifyAxis(rateLimit.calculate(m_controller.getLeftY()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND),
+            () -> -modifyAxis(rateLimit.calculate(m_controller.getLeftX()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND),
+            () -> -modifyAxis(rateLimit.calculate(m_controller.getRightX()) * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND)
+    ));
 
     s_Swerve.setDefaultCommand(
         new TeleopSwerve(
@@ -81,6 +83,7 @@ public class RobotContainer {
             () -> robotCentric.getAsBoolean()
         )
     );    
+
 
     m_ArmSubsystem.setDefaultCommand(new DefaultArmCommand(m_ArmSubsystem,
      () -> modifyAxis(m_controller.getRightTriggerAxis()),
@@ -102,13 +105,50 @@ public class RobotContainer {
     // Back button zeros the gyroscope
     new Button(m_controller::getBackButton)
             // No requirements because we don't need to interrupt anything
-            .whenPressed(s_Swerve::zeroGyro);
+
+            .whenPressed(Commands.runOnce(s_Swerve::zeroGyro));
     new Button(m_controller::getRightBumper)
             .whenPressed(m_intakeSubsystem::intake)
             .whenReleased(m_intakeSubsystem::intakeStop);
     new Button(m_controller::getLeftBumper)
             .whenPressed(m_intakeSubsystem::intakeReverse)
             .whenReleased(m_intakeSubsystem::intakeStop);
+    // new Button(m_controller::getAButton)
+    //         .whenPressed(() -> {
+    //           m_ArmSubsystem.armHoldSet(m_ArmSubsystem.getLowPosition());
+    //           m_ArmSubsystem.setArmHolding(true);});
+    // new Button(m_controller::getBButton)
+    //         .whenPressed(() -> {
+    //           m_ArmSubsystem.armHoldSet(m_ArmSubsystem.getMidPosition());
+    //           m_ArmSubsystem.setArmHolding(true);});
+    // new Button(m_controller::getYButton)
+    //         .whenPressed(() -> {
+    //           m_ArmSubsystem.armHoldSet(m_ArmSubsystem.getHighPosition());
+    //           m_ArmSubsystem.setArmHolding(true);});
+    // new Button(m_controller::getXButton)
+    //         .whenPressed(() -> {
+    //           m_ArmSubsystem.armHoldSet(m_ArmSubsystem.getStowPosition());
+    //           m_ArmSubsystem.setArmHolding(true);});
+    m_XBoxController.a()
+      .onTrue(Commands.runOnce(() -> {
+        m_ArmSubsystem.armHoldSet(m_ArmSubsystem.getLowPosition());
+        m_ArmSubsystem.setArmHolding();
+      }));
+    m_XBoxController.b()
+      .onTrue(Commands.runOnce(() -> {
+        m_ArmSubsystem.armHoldSet(m_ArmSubsystem.getMidPosition());
+        m_ArmSubsystem.setArmHolding();
+      }));
+    m_XBoxController.x()
+      .onTrue(Commands.runOnce(() -> {
+        m_ArmSubsystem.armHoldSet(m_ArmSubsystem.getStowPosition());
+        m_ArmSubsystem.setArmHolding();
+      }));
+    m_XBoxController.y()
+      .onTrue(Commands.runOnce(() -> {
+        m_ArmSubsystem.armHoldSet(m_ArmSubsystem.getHighPosition());
+        m_ArmSubsystem.setArmHolding();
+      }));
   }
 
   /**
