@@ -3,15 +3,15 @@ package frc.robot.commands;
 import java.util.function.DoubleSupplier;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.ArmSubsystem;
+import edu.wpi.first.wpilibj.Timer;
 
 public class DefaultArmCommand extends CommandBase {
     private final ArmSubsystem m_ArmSubsystem;
     private final DoubleSupplier m_heightLiftRateSupplier;
     private final DoubleSupplier m_heightLowerRateSupplier;
     private final DoubleSupplier m_wristLiftRateSupplier;
-    private double wristInputPrevious = 0;
-    private double shoulderInputPrevious = 0;
-    private double shoulderInputPrevious2 = 0;
+    private double time = 0;
+    private double previousTime = 0;
 
     public DefaultArmCommand(ArmSubsystem armSubsystem,
         DoubleSupplier heightLiftRateSupplier, 
@@ -22,6 +22,8 @@ public class DefaultArmCommand extends CommandBase {
         this.m_heightLiftRateSupplier = heightLiftRateSupplier;
         this.m_heightLowerRateSupplier = heightLowerRateSupplier;
         this.m_wristLiftRateSupplier = wristLiftRateSupplier;
+        
+        time = Timer.getFPGATimestamp();
 
         addRequirements(armSubsystem);
     }
@@ -32,13 +34,14 @@ public class DefaultArmCommand extends CommandBase {
         double armInput = m_heightLiftRateSupplier.getAsDouble();
         double armInput2 = m_heightLowerRateSupplier.getAsDouble();
         double wristInput = m_wristLiftRateSupplier.getAsDouble();
-
+        time = Timer.getFPGATimestamp();
         
         if(wristInput != 0)
         {
-            m_ArmSubsystem.unsetWristHolding();
-            m_ArmSubsystem.setArmStates(m_wristLiftRateSupplier.getAsDouble(), 1);
-            m_ArmSubsystem.setWristHoldPosition();
+            // m_ArmSubsystem.unsetWristHolding();
+            // m_ArmSubsystem.setArmStates(m_wristLiftRateSupplier.getAsDouble(), 1);
+            // m_ArmSubsystem.setWristHoldPosition();
+            m_ArmSubsystem.modifyWristHold(wristInput*(time - previousTime) * 0.5);
         }
         else
         {
@@ -62,9 +65,6 @@ public class DefaultArmCommand extends CommandBase {
             m_ArmSubsystem.setArmHolding();
         }
 
-        shoulderInputPrevious = armInput;
-        shoulderInputPrevious2 = armInput2;
-        wristInputPrevious = wristInput;
     }
 
     @Override

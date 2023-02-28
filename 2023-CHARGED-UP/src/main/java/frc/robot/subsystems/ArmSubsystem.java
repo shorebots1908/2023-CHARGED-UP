@@ -169,6 +169,9 @@ public class ArmSubsystem extends SubsystemBase{
     public double getArmPosition2(){
         return armEncoder2.getPosition();
     }
+    public void modifyWristHold(double addend){
+    wristHoldPosition += addend;
+    }
 
     public void wristHold(){ //Triggered by 'Y' Button while Held
         if(Math.abs(wristEncoder.getPosition() - wristHoldPosition) > wristDeviation){
