@@ -26,6 +26,8 @@ public class IntakeSubsystem extends SubsystemBase {
     private CANSparkMax m_intakeMotor2 = new CANSparkMax(17, MotorType.kBrushless);
     private double intakeSpeed = 0.20;
     private double intakeEject = 0.32;
+    private boolean runIntake = false;
+    private boolean runReverse = false;
     private Ultrasonic m_ultrasonic = new Ultrasonic(1,2);
 
     private MotorControllerGroup m_intakeMotors = new MotorControllerGroup(m_intakeMotor1, m_intakeMotor2);
@@ -37,33 +39,40 @@ public class IntakeSubsystem extends SubsystemBase {
         intakeEject=SmartDashboard.getNumber("Intake Eject", intakeEject);
         SmartDashboard.putNumber("Intake Eject", intakeEject);
     }
-
-
-
-    public void intake(){
-
-        // if(m_ultrasonic.getRangeInches()>2){
-        //         m_intakeMotors.set(1);
-
-        // } else{
-        //         m_intakeMotors.set(0);
-        // }
-        m_intakeMotors.set(intakeSpeed);
-    }
-
-
-    public void intakeReverse()
-    {
-            m_intakeMotors.set(-intakeEject);
-    }
-
+    
+    
     public void intakeStop() {
         m_intakeMotors.set(0);
     }
-
+    
+    public void intake(){
+        runIntake = !runIntake;
+    }
+    
+    
+    public void intakeReverse()
+    {
+        runIntake = false;
+        runReverse = true;
+        m_intakeMotors.set(-intakeEject);
+    }
+    
+    public void intakeReverseRelease() {
+        runReverse = false;
+    }
+    
     @Override
     public void periodic()
     {
+        if(runIntake){
+            m_intakeMotors.set(intakeSpeed);
+
+        }
+        else {
+            if(!runReverse){
+                intakeStop();
+            }
+        }
         intakeSpeed = SmartDashboard.getNumber("Intake Speed", intakeSpeed);
         intakeEject = SmartDashboard.getNumber("Intake Eject", intakeEject);
     }

@@ -100,14 +100,13 @@ public class RobotContainer {
     m_XBoxController.back()
       .onTrue(Commands.runOnce(s_Swerve:: zeroGyro));
     m_XBoxController.rightBumper()
-      .whileTrue(Commands.startEnd(
+      .onTrue(Commands.runOnce(
         m_intakeSubsystem::intake, 
-        m_intakeSubsystem::intakeStop, 
         m_intakeSubsystem));
     m_XBoxController.leftBumper()
       .whileTrue(Commands.startEnd(
         m_intakeSubsystem::intakeReverse,
-        m_intakeSubsystem::intakeStop,
+        m_intakeSubsystem::intakeReverseRelease,
         m_intakeSubsystem));
     m_XBoxController.a()
       .onTrue(Commands.runOnce(() -> {
