@@ -27,6 +27,7 @@ public class IntakeSubsystem extends SubsystemBase {
     private double intakeSpeed = 0.20;
     private double intakeEject = 0.32;
     private boolean runIntake = false;
+    private boolean runReverse = false;
     private Ultrasonic m_ultrasonic = new Ultrasonic(1,2);
 
     private MotorControllerGroup m_intakeMotors = new MotorControllerGroup(m_intakeMotor1, m_intakeMotor2);
@@ -52,9 +53,13 @@ public class IntakeSubsystem extends SubsystemBase {
     public void intakeReverse()
     {
         runIntake = false;
+        runReverse = true;
         m_intakeMotors.set(-intakeEject);
     }
     
+    public void intakeReverseRelease() {
+        runReverse = false;
+    }
     
     @Override
     public void periodic()
@@ -62,8 +67,11 @@ public class IntakeSubsystem extends SubsystemBase {
         if(runIntake){
             m_intakeMotors.set(intakeSpeed);
 
-        } else{
+        }
+        else {
+            if(!runReverse){
                 intakeStop();
+            }
         }
         intakeSpeed = SmartDashboard.getNumber("Intake Speed", intakeSpeed);
         intakeEject = SmartDashboard.getNumber("Intake Eject", intakeEject);

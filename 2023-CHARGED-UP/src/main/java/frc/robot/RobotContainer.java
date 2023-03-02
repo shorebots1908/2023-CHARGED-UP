@@ -105,7 +105,7 @@ public class RobotContainer {
     m_XBoxController.leftBumper()
       .whileTrue(Commands.startEnd(
         m_intakeSubsystem::intakeReverse,
-        m_intakeSubsystem::intakeStop,
+        m_intakeSubsystem::intakeReverseRelease,
         m_intakeSubsystem));
     m_XBoxController.a()
       .onTrue(Commands.runOnce(() -> {
