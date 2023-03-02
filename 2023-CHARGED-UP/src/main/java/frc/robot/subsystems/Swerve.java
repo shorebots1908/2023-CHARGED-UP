@@ -16,6 +16,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -25,6 +26,8 @@ public class Swerve extends SubsystemBase {
     //TODO: Swap out navx for pigeon.
     public AHRS gyro;
     private double[] speedScale = {1, 0.75, .5};
+    private boolean orientationToggle = true;
+
 
     public Swerve() {
         gyro = new AHRS(Constants.Swerve.nav_X_ID, (byte) 200);
@@ -37,7 +40,6 @@ public class Swerve extends SubsystemBase {
             new SwerveModule(3, Constants.Swerve.Mod3.constants)
         };
 
-
         /* By pausing init for a second before setting module offsets, we avoid a bug with inverting motors.
          * See https://github.com/Team364/BaseFalconSwerve/issues/8 for more info.
          */
@@ -45,6 +47,18 @@ public class Swerve extends SubsystemBase {
         resetModulesToAbsolute();
 
         swerveOdometry = new SwerveDriveOdometry(Constants.Swerve.swerveKinematics, getYaw(), getModulePositions());
+    }
+
+    public boolean getOrientationToggle() {
+        return orientationToggle;
+    }
+
+    public void setOrientationToggle(boolean newOrientation) {
+        orientationToggle = newOrientation;
+    }
+
+    public void toggleOrientationMode() {
+        orientationToggle = !orientationToggle;
     }
 
     public double speedScalar(int index) {
