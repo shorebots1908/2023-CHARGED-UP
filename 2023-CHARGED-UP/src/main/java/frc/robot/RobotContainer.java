@@ -43,7 +43,7 @@ public class RobotContainer {
   private final int rotationAxis = XboxController.Axis.kRightX.value;
 
   /* Driver Buttons */
-  private final JoystickButton zeroGyro = new JoystickButton(m_controller, XboxController.Button.kBack.value);
+  // private final JoystickButton zeroGyro = new JoystickButton(m_controller, XboxController.Button.kBack.value);
   private final JoystickButton robotCentric = new JoystickButton(m_controller, XboxController.Button.kLeftBumper.value);
 
   // The robot's subsystems and commands are defined here...
@@ -52,6 +52,7 @@ public class RobotContainer {
   private final ArmSubsystem m_ArmSubsystem = new ArmSubsystem();
   private final Swerve s_Swerve = new Swerve();
   private int speedMode = 2;
+  
   //TODO: Get wheels to rest in orientation. STill needed?
   //TODO: add slew rate to new swerve
   //TODO: account for gyroscope drift
@@ -138,6 +139,9 @@ public class RobotContainer {
         .onTrue(Commands.runOnce(() -> {speedMode = 1;}));
       m_XBoxController.povDown()
         .onTrue(Commands.runOnce(() -> {speedMode = 2;}));
+    m_XBoxController.rightStick()
+        .onTrue(Commands.runOnce(s_Swerve::toggleOrientationMode));
+
   }
 
   /**
