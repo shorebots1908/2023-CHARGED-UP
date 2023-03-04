@@ -175,7 +175,7 @@ public class ArmSubsystem extends SubsystemBase{
 
     public void wristHold(){ //Triggered by 'Y' Button while Held
         if(Math.abs(wristEncoder.getPosition() - wristHoldPosition) > wristDeviation){
-            this.armStates[1] = seekSpeed(wristHoldPosition, wristEncoder.getPosition());
+            this.armStates[1] = wristSpeedLimit * seekSpeed(wristHoldPosition, wristEncoder.getPosition());
         } else {
             this.armStates[1] = 0;
         }
@@ -210,10 +210,11 @@ public class ArmSubsystem extends SubsystemBase{
     }
 
     public void armHold(double desiredPosition) {
+        double calculatedSpeed = seekSpeed(desiredPosition, armEncoder.getPosition());
 
         if(Math.abs(armEncoder.getPosition() - desiredPosition) > shoulderDeviation)
         {
-            this.armStates[ArmJoint.Shoulder.value] = seekSpeed(desiredPosition, armEncoder.getPosition());
+            this.armStates[ArmJoint.Shoulder.value] = calculatedSpeed < armSpeedLimit ? calculatedSpeed : armSpeedLimit;
         }
         else
         {
@@ -222,10 +223,11 @@ public class ArmSubsystem extends SubsystemBase{
     }
 
     public void wristHold(double desiredPosition) {
+        double calculatedSpeed = seekSpeed(desiredPosition, wristEncoder.getPosition());
 
         if(Math.abs(wristEncoder.getPosition() - desiredPosition) > wristDeviation)
         {
-            this.armStates[ArmJoint.Wrist.value] = seekSpeed(desiredPosition, wristEncoder.getPosition());
+            this.armStates[ArmJoint.Wrist.value] = calculatedSpeed < wristSpeedLimit ? calculatedSpeed : wristSpeedLimit;
         } 
         else 
         {
