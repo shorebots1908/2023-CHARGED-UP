@@ -41,7 +41,7 @@ public class DefaultArmCommand extends CommandBase {
             // m_ArmSubsystem.unsetWristHolding();
             // m_ArmSubsystem.setArmStates(m_wristLiftRateSupplier.getAsDouble(), 1);
             // m_ArmSubsystem.setWristHoldPosition();
-            m_ArmSubsystem.modifyWristHold(wristInput*(time - previousTime) * 0.003);
+            m_ArmSubsystem.modifyWristHold(wristInput*(time - previousTime) * 0.0015);
         }
         else
         {
