@@ -29,8 +29,8 @@ public class ArmSubsystem extends SubsystemBase{
         }
     }
     
-    private double armSpeedLimit = 0.25;
-    private double wristSpeedLimit = 0.25;
+    private double armSpeedLimit = 0.35;
+    private double wristSpeedLimit = 0.45;
     private double[] armStates = {0.0, 0.0};
 
     //encoders
@@ -99,6 +99,8 @@ public class ArmSubsystem extends SubsystemBase{
         armEncoder = armMotor1.getEncoder();
         armEncoder2 = armMotor2.getEncoder();
         wristEncoder = wristMotor1.getEncoder();
+        currentHoldPosition = armEncoder.getPosition();
+        wristHoldPosition = wristEncoder.getPosition();
         StowPosition[0] = SmartDashboard.getNumber("Stowed Position", StowPosition[0]);
         HighPosition[0] = SmartDashboard.getNumber("High Position", HighPosition[0]);
         MidPosition[0] = SmartDashboard.getNumber("Middle Position", MidPosition[0]);
@@ -253,7 +255,8 @@ public class ArmSubsystem extends SubsystemBase{
             armHold(currentHoldPosition);
         }
         liftArm(this.armStates[ArmJoint.Shoulder.value]);
-        
+
+        SmartDashboard.putNumber("Wrist Setpoint", wristHoldPosition);
         SmartDashboard.putNumber("armMotor1", shoulderPosition1);
         SmartDashboard.putNumber("armMotor2", shoulderPosition2);
         SmartDashboard.putNumber("wristMotor1", wristEncoder.getPosition());
