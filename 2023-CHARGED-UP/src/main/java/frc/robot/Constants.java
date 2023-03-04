@@ -11,6 +11,8 @@ import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.SPI.Port;
 import frc.lib.util.COTSFalconSwerveConstants;
 import frc.lib.util.SwerveModuleConstants;
+import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.apriltag.*;
 
 public final class Constants {
     public static final double stickDeadband = 0.1;
@@ -90,6 +92,10 @@ public final class Constants {
         /* Neutral Modes */
         public static final NeutralMode angleNeutralMode = NeutralMode.Coast;
         public static final NeutralMode driveNeutralMode = NeutralMode.Brake;
+
+
+        
+
 
         /* Module Specific Constants */
         /* Front Left Module - Module 0 */
