@@ -17,6 +17,7 @@ public class CameraSubsystem extends SubsystemBase{
 
 public CameraSubsystem() {
 
+
     
 
     }
@@ -29,7 +30,7 @@ public void periodic(){
     double area = ta.getDouble(0.0);
 
   
-    SmartDashboard.putNumber("LimelightX", x);
+    SmartDashboard.putNumber("Limelight X", x);
     SmartDashboard.putNumber("LimelightY", y);
     SmartDashboard.putNumber("LimelightArea", area);
     }
