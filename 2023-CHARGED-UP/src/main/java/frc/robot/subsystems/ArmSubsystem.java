@@ -260,7 +260,7 @@ public class ArmSubsystem extends SubsystemBase{
         SmartDashboard.putNumber("armMotor1", shoulderPosition1);
         SmartDashboard.putNumber("armMotor2", shoulderPosition2);
         SmartDashboard.putNumber("wristMotor1", wristEncoder.getPosition());
-        SmartDashboard.putNumber("Shoulder Desync", Math.abs(shoulderPosition1 - shoulderPosition2));
+        SmartDashboard.putNumber("Shoulder Desync", Math.abs(shoulderPosition1 + shoulderPosition2));
         StowPosition[0] = SmartDashboard.getNumber("Stowed Position", StowPosition[0]);
         HighPosition[0] = SmartDashboard.getNumber("High Position", HighPosition[0]);
         MidPosition[0] = SmartDashboard.getNumber("Middle Position", MidPosition[0]);
