@@ -24,7 +24,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 public class IntakeSubsystem extends SubsystemBase {
     private CANSparkMax m_intakeMotor1 = new CANSparkMax(16, MotorType.kBrushless);
     private CANSparkMax m_intakeMotor2 = new CANSparkMax(17, MotorType.kBrushless);
-    private double intakeSpeed = 0.20;
+    private double intakeSpeed = 0.30;
     private double intakeEject = 0.32;
     private boolean runIntake = false;
     private boolean runReverse = false;
