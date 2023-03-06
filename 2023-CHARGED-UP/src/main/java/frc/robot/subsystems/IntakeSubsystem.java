@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj.Timer;
 // import edu.wpi.first.wpilibj.GenericHID;
 // import edu.wpi.first.wpilibj.XboxController;
 // import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -30,10 +31,13 @@ public class IntakeSubsystem extends SubsystemBase {
     private boolean runReverse = false;
     private RelativeEncoder encoder1, encoder2;
     private Ultrasonic m_ultrasonic = new Ultrasonic(1,2);
+    private double timeCheck;
 
     private MotorControllerGroup m_intakeMotors = new MotorControllerGroup(m_intakeMotor1, m_intakeMotor2);
 
     public IntakeSubsystem() {
+        m_intakeMotor1.setIdleMode(IdleMode.kBrake);
+        m_intakeMotor2.setIdleMode(IdleMode.kBrake);
         m_intakeMotor2.setInverted(true);
         intakeSpeed=SmartDashboard.getNumber("Intake Speed", intakeSpeed);
         SmartDashboard.putNumber("Intake Speed", intakeSpeed);
@@ -53,6 +57,9 @@ public class IntakeSubsystem extends SubsystemBase {
     
     public void intake(){
         runIntake = !runIntake;
+        if(runIntake) {
+            timeCheck = Timer.getFPGATimestamp();
+        }
     }
     
     
@@ -72,8 +79,10 @@ public class IntakeSubsystem extends SubsystemBase {
     {
         if(runIntake){
             m_intakeMotors.set(intakeSpeed);
-            if(Math.abs(encoder1.getVelocity()) < 10 || Math.abs(encoder2.getVelocity()) < 10) {
-                intakeStop();
+            if(Timer.getFPGATimestamp() - timeCheck > 0.5){
+                if(Math.abs(encoder1.getVelocity()) < 10 || Math.abs(encoder2.getVelocity()) < 10) {
+                    intakeStop();
+                }
             }
         }
         else {
