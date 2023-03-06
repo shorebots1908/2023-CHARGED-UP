@@ -119,6 +119,15 @@ public class ArmSubsystem extends SubsystemBase{
         currentHoldPosition = desiredPosition;
     }
 
+    public boolean inPosition(){
+        return seekSpeed(currentHoldPosition, armSpeedLimit) == 0;
+    }
+    public boolean isPosition(){
+        return seekSpeed(if(Math.abs(wristEncoder.getPosition() - wristHoldPosition) > wristDeviation) {
+            seekSpeed(wristHoldPosition, wristEncoder.getPosition());
+        });
+    }
+
     public double getHighPosition(int index){
         return HighPosition[index];
     }

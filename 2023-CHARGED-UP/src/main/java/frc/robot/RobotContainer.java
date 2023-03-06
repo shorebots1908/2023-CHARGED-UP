@@ -20,6 +20,9 @@ import frc.robot.commands.DefaultArmCommand;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+
+import java.util.function.Function;
+
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.Swerve;
@@ -67,6 +70,27 @@ public class RobotContainer {
     // Left stick Y axis -> forward and backwards movement
     // Left stick X axis -> left and right movement
     // Right stick X axis -> rotation
+
+    //AutoCommand definition
+    final FunctionalCommand liftArm = new FunctionalCommand(
+      null, 
+      () -> {
+        m_ArmSubsystem.armHold(0.65);
+      }, 
+      null, 
+      m_ArmSubsystem::inPosition, 
+      m_ArmSubsystem
+      );
+
+      final FunctionalCommand liftWrist = new FunctionalCommand(
+        null, 
+        () -> {
+          m_ArmSubsystem.wristHold(0.65);
+        }, 
+        null, 
+        m_ArmSubsystem::inPosition, 
+        m_ArmSubsystem
+        );
 
     s_Swerve.setDefaultCommand(
         new TeleopSwerve(
