@@ -58,7 +58,11 @@ public class ArmSubsystem extends SubsystemBase{
     private double shoulderPosition1;
     private double shoulderPosition2;
     private double oldShoulderPosition;
-    private double armHeightLimit = 
+    private boolean armLimiterOverride = false;
+
+    public void armLimiterOverride() {
+        armLimiterOverride = !armLimiterOverride;
+    }
 
     public boolean getWristHolding()
     {
@@ -258,6 +262,9 @@ public class ArmSubsystem extends SubsystemBase{
             liftArm(this.armStates[ArmJoint.Shoulder.value]);
         }
         else if(armEncoder.getPosition() > 0 && this.armStates[ArmJoint.Shoulder.value] < 0) {
+            liftArm(this.armStates[ArmJoint.Shoulder.value]);
+        }
+        else if(armLimiterOverride) {
             liftArm(this.armStates[ArmJoint.Shoulder.value]);
         }
 
