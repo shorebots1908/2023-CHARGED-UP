@@ -28,6 +28,7 @@ public class IntakeSubsystem extends SubsystemBase {
     private double intakeEject = 0.32;
     private boolean runIntake = false;
     private boolean runReverse = false;
+    private RelativeEncoder encoder1, encoder2;
     private Ultrasonic m_ultrasonic = new Ultrasonic(1,2);
 
     private MotorControllerGroup m_intakeMotors = new MotorControllerGroup(m_intakeMotor1, m_intakeMotor2);
@@ -38,10 +39,13 @@ public class IntakeSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Intake Speed", intakeSpeed);
         intakeEject=SmartDashboard.getNumber("Intake Eject", intakeEject);
         SmartDashboard.putNumber("Intake Eject", intakeEject);
+        encoder1 = m_intakeMotor1.getEncoder();
+        encoder2 = m_intakeMotor2.getEncoder();
     }
     
     
     public void intakeStop() {
+        runIntake = false;
         m_intakeMotors.set(0);
     }
     
@@ -66,7 +70,9 @@ public class IntakeSubsystem extends SubsystemBase {
     {
         if(runIntake){
             m_intakeMotors.set(intakeSpeed);
-
+            if(Math.abs(encoder1.getVelocity()) < 10 || Math.abs(encoder2.getVelocity()) < 10) {
+                intakeStop();
+            }
         }
         else {
             if(!runReverse){
@@ -75,5 +81,6 @@ public class IntakeSubsystem extends SubsystemBase {
         }
         intakeSpeed = SmartDashboard.getNumber("Intake Speed", intakeSpeed);
         intakeEject = SmartDashboard.getNumber("Intake Eject", intakeEject);
+        SmartDashboard.putBoolean("Intake Active", runIntake);
     }
 }
