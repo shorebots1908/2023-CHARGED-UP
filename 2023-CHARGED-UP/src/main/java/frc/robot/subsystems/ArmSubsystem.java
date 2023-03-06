@@ -30,7 +30,7 @@ public class ArmSubsystem extends SubsystemBase{
     }
     
     private double armSpeedLimit = 0.35;
-    private double wristSpeedLimit = 0.45;
+    private double wristSpeedLimit = 0.35;
     private double[] armStates = {0.0, 0.0};
 
     //encoders
