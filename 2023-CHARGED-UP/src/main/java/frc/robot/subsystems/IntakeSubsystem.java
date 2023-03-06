@@ -39,6 +39,8 @@ public class IntakeSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Intake Speed", intakeSpeed);
         intakeEject=SmartDashboard.getNumber("Intake Eject", intakeEject);
         SmartDashboard.putNumber("Intake Eject", intakeEject);
+        m_intakeMotor1.setSmartCurrentLimit(20);
+        m_intakeMotor2.setSmartCurrentLimit(20);
         encoder1 = m_intakeMotor1.getEncoder();
         encoder2 = m_intakeMotor2.getEncoder();
     }
