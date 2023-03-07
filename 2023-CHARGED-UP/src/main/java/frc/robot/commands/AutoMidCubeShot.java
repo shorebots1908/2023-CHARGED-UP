@@ -17,7 +17,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 public class AutoMidCubeShot extends CommandBase {
 
-private double changedPosition = armEncoder.setPosition(0.65);
+
 
 
 
@@ -26,21 +26,25 @@ public AutoMidCubeShot() {
 }
 
 
-public void midShot() {
-    new FunctionalCommand(
-    // Reset encoders on command start
-    armEncoder.setPosition(0.65),
-    // Start driving forward at the start of the command
-    () -> ,
-    // Stop driving at the end of the command
-    interrupted -> armHoldSet(0.65),
-    // End the command when the robot's driven distance exceeds the desired value
-    () -> armEncoder.getArmPosition() >= changedPosition,
-    // Require the drive subsystem
-    m_ArmSubsystem
-)
-}
+// public void midShot() {
+//     new FunctionalCommand(
+//     // Reset encoders on command start
+//     armEncoder.setPosition(0.65),
+//     // Start driving forward at the start of the command
+//     () -> system.out.println("midShotActivated"),
+//     // Stop driving at the end of the command
+//     interrupted -> armHoldSet(0.65),
+//     // End the command when the robot's driven distance exceeds the desired value
+//     () -> armEncoder.getArmPosition() >= changedPosition,
+//     // Require the drive subsystem
+//     m_ArmSubsystem
+// );
+// }
 
+@Override
+public void periodic() {
+    
+}
 
 
 
