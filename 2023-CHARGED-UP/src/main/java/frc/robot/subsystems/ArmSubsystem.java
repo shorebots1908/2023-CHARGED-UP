@@ -17,7 +17,7 @@ public class ArmSubsystem extends SubsystemBase{
     private CANSparkMax armMotor2 = new CANSparkMax(14, MotorType.kBrushless);
     private CANSparkMax wristMotor1 = new CANSparkMax(15, MotorType.kBrushless);
 
-    //state management parameterd
+    //state management parameters
     public enum ArmJoint {
         Shoulder(0),
         Wrist(1);
@@ -58,7 +58,11 @@ public class ArmSubsystem extends SubsystemBase{
     private double shoulderPosition1;
     private double shoulderPosition2;
     private double oldShoulderPosition;
+    private boolean armLimiterOverride = false;
 
+    public void armLimiterOverride() {
+        armLimiterOverride = !armLimiterOverride;
+    }
 
     public boolean getWristHolding()
     {
@@ -263,13 +267,21 @@ public class ArmSubsystem extends SubsystemBase{
         {
             armHold(currentHoldPosition);
         }
-        liftArm(this.armStates[ArmJoint.Shoulder.value]);
+        else if(armEncoder.getPosition() < 140 && this.armStates[ArmJoint.Shoulder.value] > 0) {
+            liftArm(this.armStates[ArmJoint.Shoulder.value]);
+        }
+        else if(armEncoder.getPosition() > 0 && this.armStates[ArmJoint.Shoulder.value] < 0) {
+            liftArm(this.armStates[ArmJoint.Shoulder.value]);
+        }
+        else if(armLimiterOverride) {
+            liftArm(this.armStates[ArmJoint.Shoulder.value]);
+        }
 
         SmartDashboard.putNumber("Wrist Setpoint", wristHoldPosition);
         SmartDashboard.putNumber("armMotor1", shoulderPosition1);
         SmartDashboard.putNumber("armMotor2", shoulderPosition2);
         SmartDashboard.putNumber("wristMotor1", wristEncoder.getPosition());
-        SmartDashboard.putNumber("Shoulder Desync", Math.abs(shoulderPosition1 + shoulderPosition2));
+        SmartDashboard.putNumber("Shoulder Desync", Math.abs(shoulderPosition1 - shoulderPosition2));
         StowPosition[0] = SmartDashboard.getNumber("Stowed Position", StowPosition[0]);
         HighPosition[0] = SmartDashboard.getNumber("High Position", HighPosition[0]);
         MidPosition[0] = SmartDashboard.getNumber("Middle Position", MidPosition[0]);
