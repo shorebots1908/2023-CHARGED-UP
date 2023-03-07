@@ -32,6 +32,7 @@ public class IntakeSubsystem extends SubsystemBase {
     private RelativeEncoder encoder1, encoder2;
     private Ultrasonic m_ultrasonic = new Ultrasonic(1,2);
     private double timeCheck;
+    private double minRPM = .5;
 
     private MotorControllerGroup m_intakeMotors = new MotorControllerGroup(m_intakeMotor1, m_intakeMotor2);
 
@@ -80,7 +81,7 @@ public class IntakeSubsystem extends SubsystemBase {
         if(runIntake){
             m_intakeMotors.set(intakeSpeed);
             if(Timer.getFPGATimestamp() - timeCheck > 0.5){
-                if(Math.abs(encoder1.getVelocity()) < 10 || Math.abs(encoder2.getVelocity()) < 10) {
+                if(Math.abs(encoder1.getVelocity()) < minRPM || Math.abs(encoder2.getVelocity()) < minRPM) {
                     intakeStop();
                 }
             }
