@@ -39,7 +39,7 @@ public class ArmSubsystem extends SubsystemBase{
     private RelativeEncoder wristEncoder;
 
     private double minSpeed = 0.05;
-    private double maxSpeed = 1.0;
+    private double maxSpeed = .60;
 
     //hold position settings
     //TODO: set proper values based on encoder readouts.
@@ -64,6 +64,7 @@ public class ArmSubsystem extends SubsystemBase{
 
     public void armLimiterOverride() {
         armLimiterOverride = !armLimiterOverride;
+        SmartDashboard.putBoolean("Arm Override", armLimiterOverride);
     }
 
     public boolean getWristHolding()

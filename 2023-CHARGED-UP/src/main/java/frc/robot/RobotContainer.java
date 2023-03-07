@@ -162,6 +162,8 @@ public class RobotContainer {
         .onTrue(Commands.runOnce(() -> {speedMode = 1;}));
       m_XBoxController.povDown()
         .onTrue(Commands.runOnce(() -> {speedMode = 2;}));
+    m_XBoxController.povLeft()
+      .onTrue(Commands.runOnce(m_ArmSubsystem::armLimiterOverride));
     m_XBoxController.rightStick()
         .onTrue(Commands.runOnce(s_Swerve::toggleOrientationMode));
 
