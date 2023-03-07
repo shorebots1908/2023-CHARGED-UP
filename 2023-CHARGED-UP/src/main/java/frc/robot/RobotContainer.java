@@ -72,25 +72,25 @@ public class RobotContainer {
     // Right stick X axis -> rotation
 
     //AutoCommand definition
-    final FunctionalCommand liftArm = new FunctionalCommand(
-      null, 
-      () -> {
-        m_ArmSubsystem.armHold(0.65);
-      }, 
-      null, 
-      m_ArmSubsystem::inPosition, 
-      m_ArmSubsystem
-      );
+    // final FunctionalCommand liftArm = new FunctionalCommand(
+    //   null, 
+    //   () -> {
+    //     m_ArmSubsystem.armHold(0.65);
+    //   }, 
+    //   null, 
+    //   m_ArmSubsystem::inPosition, 
+    //   m_ArmSubsystem
+    //   );
 
-      final FunctionalCommand liftWrist = new FunctionalCommand(
-        null, 
-        () -> {
-          m_ArmSubsystem.wristHold(0.65);
-        }, 
-        null, 
-        m_ArmSubsystem::inPosition, 
-        m_ArmSubsystem
-        );
+    //   final FunctionalCommand liftWrist = new FunctionalCommand(
+    //     null, 
+    //     () -> {
+    //       m_ArmSubsystem.wristHold(0.65);
+    //     }, 
+    //     null, 
+    //     m_ArmSubsystem::inPosition, 
+    //     m_ArmSubsystem
+    //     );
 
     s_Swerve.setDefaultCommand(
         new TeleopSwerve(
