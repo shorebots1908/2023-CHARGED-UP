@@ -280,6 +280,9 @@ public class ArmSubsystem extends SubsystemBase{
         else if(armEncoder.getPosition() > 0 && this.armStates[ArmJoint.Shoulder.value] < 0) {
             liftArm(this.armStates[ArmJoint.Shoulder.value]);
         }
+        else if(this.armStates[ArmJoint.Shoulder.value] == 0){
+            liftArm(0);
+        }
         else if(armLimiterOverride) {
             liftArm(this.armStates[ArmJoint.Shoulder.value]);
         }
