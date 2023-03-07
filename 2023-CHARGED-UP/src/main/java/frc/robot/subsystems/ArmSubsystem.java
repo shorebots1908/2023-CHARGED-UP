@@ -126,12 +126,12 @@ public class ArmSubsystem extends SubsystemBase{
         currentHoldPosition = desiredPosition;
     }
 
-    public boolean inPosition(){
-        return seekSpeed(currentHoldPosition, armSpeedLimit) == 0;
-    }
-    public boolean isPosition(){
-        return false;
-    }
+    // public boolean inPosition(){
+    //     return seekSpeed(currentHoldPosition, armSpeedLimit) == 0;
+    // }
+    // public boolean isPosition(){
+    //     return false;
+    // }
 
     public double getHighPosition(int index){
         return HighPosition[index];
@@ -275,18 +275,13 @@ public class ArmSubsystem extends SubsystemBase{
         {
             armHold(currentHoldPosition);
         }
-        else if(armEncoder.getPosition() < 140 && this.armStates[ArmJoint.Shoulder.value] > 0) {
-            liftArm(this.armStates[ArmJoint.Shoulder.value]);
+        else if(armEncoder.getPosition() > 140 && this.armStates[ArmJoint.Shoulder.value] > 0 && !armLimiterOverride) {
+            setArmStates(0, ArmJoint.Shoulder.value);
         }
-        else if(armEncoder.getPosition() > 0 && this.armStates[ArmJoint.Shoulder.value] < 0) {
-            liftArm(this.armStates[ArmJoint.Shoulder.value]);
+        else if(armEncoder.getPosition() < 0 && this.armStates[ArmJoint.Shoulder.value] < 0 && !armLimiterOverride) {
+            setArmStates(0, ArmJoint.Shoulder.value);
         }
-        else if(this.armStates[ArmJoint.Shoulder.value] == 0){
-            liftArm(0);
-        }
-        else if(armLimiterOverride) {
-            liftArm(this.armStates[ArmJoint.Shoulder.value]);
-        }
+        liftArm(this.armStates[ArmJoint.Shoulder.value]);
 
         SmartDashboard.putNumber("Wrist Setpoint", wristHoldPosition);
         SmartDashboard.putNumber("armMotor1", shoulderPosition1);
