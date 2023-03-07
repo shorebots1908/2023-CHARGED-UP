@@ -32,7 +32,7 @@ public class IntakeSubsystem extends SubsystemBase {
     private RelativeEncoder encoder1, encoder2;
     private Ultrasonic m_ultrasonic = new Ultrasonic(1,2);
     private double timeCheck;
-    private double minRPM = .5;
+    private double minRPM = 0.5;
 
     private MotorControllerGroup m_intakeMotors = new MotorControllerGroup(m_intakeMotor1, m_intakeMotor2);
 
@@ -87,6 +87,7 @@ public class IntakeSubsystem extends SubsystemBase {
             }
         }
         else {
+            //TODO: add functionality to pull piece back in if the intake motors are letting it slip out. 
             if(!runReverse){
                 intakeStop();
             }
@@ -94,5 +95,7 @@ public class IntakeSubsystem extends SubsystemBase {
         intakeSpeed = SmartDashboard.getNumber("Intake Speed", intakeSpeed);
         intakeEject = SmartDashboard.getNumber("Intake Eject", intakeEject);
         SmartDashboard.putBoolean("Intake Active", runIntake);
+        SmartDashboard.putNumber("Intake Motor 1", encoder1.getVelocity());
+        SmartDashboard.putNumber("Intake Motor 2", encoder2.getVelocity());
     }
 }
