@@ -47,7 +47,7 @@ public class RobotContainer {
 
   /* Driver Buttons */
   // private final JoystickButton zeroGyro = new JoystickButton(m_controller, XboxController.Button.kBack.value);
-  private final JoystickButton robotCentric = new JoystickButton(m_controller, XboxController.Button.kLeftBumper.value);
+  //private final JoystickButton robotCentric = new JoystickButton(m_controller, XboxController.Button.kLeftBumper.value);
 
   // The robot's subsystems and commands are defined here...
   //private final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
@@ -98,7 +98,7 @@ public class RobotContainer {
             () -> -m_controller.getRawAxis(translationAxis) * s_Swerve.speedScalar(speedMode), 
             () -> -m_controller.getRawAxis(strafeAxis) * s_Swerve.speedScalar(speedMode), 
             () -> -m_controller.getRawAxis(rotationAxis) * s_Swerve.speedScalar(speedMode), 
-            () -> robotCentric.getAsBoolean()
+            () -> s_Swerve.getOrientationToggle()
         )
     );    
 

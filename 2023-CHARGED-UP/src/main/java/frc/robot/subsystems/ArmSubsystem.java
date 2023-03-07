@@ -46,6 +46,8 @@ public class ArmSubsystem extends SubsystemBase{
     private double motorRatios = 27.0 / 400.0;
     private double shoulderDeviation = 1;
     private double wristDeviation = 0.2;
+    private double wristMax = -16;
+    private double wristMin = 0;
     private double[] HighPosition = {137, 11.45};
     private double[] MidPosition = {120.8, 11};
     private double[] LowPosition = {24.7, 5.5};
@@ -127,9 +129,7 @@ public class ArmSubsystem extends SubsystemBase{
         return seekSpeed(currentHoldPosition, armSpeedLimit) == 0;
     }
     public boolean isPosition(){
-        return seekSpeed(if(Math.abs(wristEncoder.getPosition() - wristHoldPosition) > wristDeviation) {
-            seekSpeed(wristHoldPosition, wristEncoder.getPosition());
-        });
+        return false;
     }
 
     public double getHighPosition(int index){
@@ -185,7 +185,13 @@ public class ArmSubsystem extends SubsystemBase{
         return armEncoder2.getPosition();
     }
     public void modifyWristHold(double addend){
-    wristHoldPosition += addend;
+        wristHoldPosition += addend;
+        if(wristHoldPosition < wristMax) {
+            wristHoldPosition = wristMax;
+        }
+        else if(wristHoldPosition > wristMin) {
+            wristHoldPosition = wristMin;
+        }
     }
 
     public void wristHold(){ //Triggered by 'Y' Button while Held
@@ -258,7 +264,8 @@ public class ArmSubsystem extends SubsystemBase{
 
         if(wristHolding)
         {
-            wristHoldPosition += (shoulderPosition1 - oldShoulderPosition) * motorRatios;
+            modifyWristHold((shoulderPosition1 - oldShoulderPosition) * motorRatios);
+            //wristHoldPosition += (shoulderPosition1 - oldShoulderPosition) * motorRatios;
             wristHold(wristHoldPosition);
         }
         wristMove(this.armStates[ArmJoint.Wrist.value]);
