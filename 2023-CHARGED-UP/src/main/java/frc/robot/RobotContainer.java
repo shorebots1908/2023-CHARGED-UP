@@ -23,6 +23,8 @@ import frc.robot.subsystems.IntakeSubsystem;
 
 import java.util.function.Function;
 
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.Swerve;
@@ -44,6 +46,9 @@ public class RobotContainer {
   private final int translationAxis = XboxController.Axis.kLeftY.value;
   private final int strafeAxis = XboxController.Axis.kLeftX.value;
   private final int rotationAxis = XboxController.Axis.kRightX.value;
+
+  private UsbCamera camera1;
+  private UsbCamera camera2;
 
   /* Driver Buttons */
   // private final JoystickButton zeroGyro = new JoystickButton(m_controller, XboxController.Button.kBack.value);
@@ -91,6 +96,13 @@ public class RobotContainer {
     //     m_ArmSubsystem::inPosition, 
     //     m_ArmSubsystem
     //     );
+
+    camera1 = CameraServer.startAutomaticCapture(0);
+    camera2 = CameraServer.startAutomaticCapture(1);
+    camera1.setResolution(40, 30);
+    camera2.setResolution(40, 30);
+    camera1.setFPS(15);
+    camera2.setFPS(15);
 
     s_Swerve.setDefaultCommand(
         new TeleopSwerve(
