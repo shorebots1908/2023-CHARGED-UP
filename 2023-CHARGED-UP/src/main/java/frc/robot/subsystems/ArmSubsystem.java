@@ -39,14 +39,14 @@ public class ArmSubsystem extends SubsystemBase{
     private RelativeEncoder wristEncoder;
 
     private double minSpeed = 0.05;
-    private double maxSpeed = .60;
+    private double maxSpeed = 1.0;
 
     //hold position settings
     //TODO: set proper values based on encoder readouts.
     private double motorRatios = 27.0 / 400.0;
     private double shoulderDeviation = 1;
     private double wristDeviation = 0.2;
-    private double wristMax = -16;
+    private double wristMax = -23;
     private double wristMin = 0;
     private double[] HighPosition = {137, 11.45};
     private double[] MidPosition = {120.8, 11};
