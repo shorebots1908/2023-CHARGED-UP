@@ -146,6 +146,14 @@ public class ArmSubsystem extends SubsystemBase{
         return StowPosition[index];
     }
 
+    public double getCurrentShoulderPosition() {
+        return armEncoder.getPosition();
+    }
+
+    public double getCurrentWristPosition() {
+        return wristEncoder.getPosition();
+    }
+
     public void liftArm(double power) 
     {
         armMotors.set(armSpeedLimit * power);

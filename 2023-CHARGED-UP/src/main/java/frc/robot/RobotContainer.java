@@ -7,25 +7,37 @@ package frc.robot;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.trajectory.TrajectoryConfig;
+import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.button.Button;
+import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
+import frc.robot.Constants;
+// import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
+// import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+// import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.DefaultArmCommand;
-import frc.robot.commands.DefaultDriveCommand;
-import frc.robot.subsystems.DrivetrainSubsystem;
+// import frc.robot.commands.DefaultDriveCommand;
+// import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 
-import java.util.function.Function;
+import java.util.List;
+
+// import java.util.function.Function;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.UsbCamera;
-import edu.wpi.first.math.filter.SlewRateLimiter;
+// import edu.wpi.first.math.filter.SlewRateLimiter;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.Swerve;
 import frc.robot.commands.*;
@@ -61,11 +73,6 @@ public class RobotContainer {
   private final Swerve s_Swerve = new Swerve();
   private int speedMode = 2;
   
-  //TODO: Get wheels to rest in orientation. STill needed?
-  //TODO: add slew rate to new swerve
-  //TODO: account for gyroscope drift
-  //TODO: use sensor to stop where pieces need to go
-  //TODO: gyrostabilizationf
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -187,8 +194,68 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // An ExampleCommand will run in autonomous
-    return new InstantCommand();
+    TrajectoryConfig config = 
+      new TrajectoryConfig(
+        Constants.AutoConstants.kMaxSpeedMetersPerSecond, 
+        Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared)
+        .setKinematics(Constants.Swerve.swerveKinematics);
+
+    Trajectory testTrajectory = 
+      TrajectoryGenerator.generateTrajectory(
+        new Pose2d(0, 0, new Rotation2d( 0)), 
+        List.of(new Translation2d(1, 0)), 
+        new Pose2d(2, 0, new Rotation2d(0)), 
+        config);
+    
+    var thetaController = 
+      new ProfiledPIDController(
+        Constants.AutoConstants.kPThetaController, 0 , 0, Constants.AutoConstants.kThetaControllerConstraints);
+    thetaController.enableContinuousInput(-Math.PI, Math.PI);
+    
+    SwerveControllerCommand swerveControllerCommand1 = 
+      new SwerveControllerCommand(
+        testTrajectory, 
+        s_Swerve::getPose, 
+        Constants.Swerve.swerveKinematics, 
+        
+        new PIDController(Constants.AutoConstants.kPXController, 0, 0), 
+        new PIDController(Constants.AutoConstants.kPXController, 0, 0), 
+        thetaController,
+        s_Swerve::setModuleStates,
+        s_Swerve);
+
+    s_Swerve.resetOdometry(testTrajectory.getInitialPose());
+
+    FunctionalCommand raiseArm = 
+      new FunctionalCommand(
+        () -> {}, 
+        () -> m_ArmSubsystem.armHoldSet(80), 
+        interrupted -> {m_ArmSubsystem.armHoldSet(m_ArmSubsystem.getCurrentShoulderPosition());}, 
+        () -> {return Math.abs(80 - m_ArmSubsystem.getCurrentShoulderPosition()) < 3;}, 
+        m_ArmSubsystem);
+
+    FunctionalCommand liftWrist = 
+      new FunctionalCommand(
+        () -> {}, 
+        () -> m_ArmSubsystem.wristHold(-13), 
+        interrupted -> {m_ArmSubsystem.wristHold(m_ArmSubsystem.getCurrentWristPosition());}, 
+        () -> {return Math.abs(-13 - m_ArmSubsystem.getCurrentWristPosition()) < 0.5;}, 
+        m_ArmSubsystem);
+
+    // FunctionalCommand eject = 
+    //   new FunctionalCommand(
+    //     () -> {m_intakeSubsystem}, 
+    //     () -> {m_intakeSubsystem}), 
+    //     interrupted -> m_intakeSubsystem., 
+    //     () -> {return }), 
+    //     m_intakeSubsystem);
+
+
+
+    return raiseArm
+      .andThen(liftWrist);
+      //.andThen(swerveControllerCommand1
+      //.andThen(() -> s_Swerve.drive(new Translation2d(0, 0), 0, false, false)));
   }
 
   private static double deadband(double value, double deadband) {
@@ -207,7 +274,7 @@ public class RobotContainer {
     // Deadband
     value = deadband(value, 0.05);
 
-    // Square the axis
+    // Square the axis, keep its sign.
     value = Math.copySign(value * value, value);
 
     return value;
