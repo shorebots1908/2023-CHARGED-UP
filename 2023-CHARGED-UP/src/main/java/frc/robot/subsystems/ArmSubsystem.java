@@ -17,7 +17,7 @@ public class ArmSubsystem extends SubsystemBase{
     private CANSparkMax armMotor2 = new CANSparkMax(14, MotorType.kBrushless);
     private CANSparkMax wristMotor1 = new CANSparkMax(15, MotorType.kBrushless);
 
-    //state management parameterd
+    //state management parameters
     public enum ArmJoint {
         Shoulder(0),
         Wrist(1);
@@ -30,7 +30,7 @@ public class ArmSubsystem extends SubsystemBase{
     }
     
     private double armSpeedLimit = 0.35;
-    private double wristSpeedLimit = 0.45;
+    private double wristSpeedLimit = 0.35;
     private double[] armStates = {0.0, 0.0};
 
     //encoders
@@ -46,6 +46,8 @@ public class ArmSubsystem extends SubsystemBase{
     private double motorRatios = 27.0 / 400.0;
     private double shoulderDeviation = 1;
     private double wristDeviation = 0.2;
+    private double wristMax = -23;
+    private double wristMin = 0;
     private double[] HighPosition = {137, 11.45};
     private double[] MidPosition = {120.8, 11};
     private double[] LowPosition = {24.7, 5.5};
@@ -58,7 +60,12 @@ public class ArmSubsystem extends SubsystemBase{
     private double shoulderPosition1;
     private double shoulderPosition2;
     private double oldShoulderPosition;
+    private boolean armLimiterOverride = false;
 
+    public void armLimiterOverride() {
+        armLimiterOverride = !armLimiterOverride;
+        SmartDashboard.putBoolean("Arm Override", armLimiterOverride);
+    }
 
     public boolean getWristHolding()
     {
@@ -119,6 +126,13 @@ public class ArmSubsystem extends SubsystemBase{
         currentHoldPosition = desiredPosition;
     }
 
+    // public boolean inPosition(){
+    //     return seekSpeed(currentHoldPosition, armSpeedLimit) == 0;
+    // }
+    // public boolean isPosition(){
+    //     return false;
+    // }
+
     public double getHighPosition(int index){
         return HighPosition[index];
     }
@@ -172,7 +186,13 @@ public class ArmSubsystem extends SubsystemBase{
         return armEncoder2.getPosition();
     }
     public void modifyWristHold(double addend){
-    wristHoldPosition += addend;
+        wristHoldPosition += addend;
+        if(wristHoldPosition < wristMax) {
+            wristHoldPosition = wristMax;
+        }
+        else if(wristHoldPosition > wristMin) {
+            wristHoldPosition = wristMin;
+        }
     }
 
     public void wristHold(){ //Triggered by 'Y' Button while Held
@@ -245,7 +265,8 @@ public class ArmSubsystem extends SubsystemBase{
 
         if(wristHolding)
         {
-            wristHoldPosition += (shoulderPosition1 - oldShoulderPosition) * motorRatios;
+            modifyWristHold((shoulderPosition1 - oldShoulderPosition) * motorRatios);
+            //wristHoldPosition += (shoulderPosition1 - oldShoulderPosition) * motorRatios;
             wristHold(wristHoldPosition);
         }
         wristMove(this.armStates[ArmJoint.Wrist.value]);
@@ -253,6 +274,12 @@ public class ArmSubsystem extends SubsystemBase{
         if(armHolding)
         {
             armHold(currentHoldPosition);
+        }
+        else if(armEncoder.getPosition() > 140 && this.armStates[ArmJoint.Shoulder.value] > 0 && !armLimiterOverride) {
+            setArmStates(0, ArmJoint.Shoulder.value);
+        }
+        else if(armEncoder.getPosition() < 0 && this.armStates[ArmJoint.Shoulder.value] < 0 && !armLimiterOverride) {
+            setArmStates(0, ArmJoint.Shoulder.value);
         }
         liftArm(this.armStates[ArmJoint.Shoulder.value]);
 

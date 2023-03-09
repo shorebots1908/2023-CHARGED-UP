@@ -20,6 +20,11 @@ import frc.robot.commands.DefaultArmCommand;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+
+import java.util.function.Function;
+
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.Swerve;
@@ -42,9 +47,12 @@ public class RobotContainer {
   private final int strafeAxis = XboxController.Axis.kLeftX.value;
   private final int rotationAxis = XboxController.Axis.kRightX.value;
 
+  private UsbCamera camera1;
+  private UsbCamera camera2;
+
   /* Driver Buttons */
   // private final JoystickButton zeroGyro = new JoystickButton(m_controller, XboxController.Button.kBack.value);
-  private final JoystickButton robotCentric = new JoystickButton(m_controller, XboxController.Button.kLeftBumper.value);
+  //private final JoystickButton robotCentric = new JoystickButton(m_controller, XboxController.Button.kLeftBumper.value);
 
   // The robot's subsystems and commands are defined here...
   //private final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
@@ -68,13 +76,41 @@ public class RobotContainer {
     // Left stick X axis -> left and right movement
     // Right stick X axis -> rotation
 
+    //AutoCommand definition
+    // final FunctionalCommand liftArm = new FunctionalCommand(
+    //   null, 
+    //   () -> {
+    //     m_ArmSubsystem.armHold(0.65);
+    //   }, 
+    //   null, 
+    //   m_ArmSubsystem::inPosition, 
+    //   m_ArmSubsystem
+    //   );
+
+    //   final FunctionalCommand liftWrist = new FunctionalCommand(
+    //     null, 
+    //     () -> {
+    //       m_ArmSubsystem.wristHold(0.65);
+    //     }, 
+    //     null, 
+    //     m_ArmSubsystem::inPosition, 
+    //     m_ArmSubsystem
+    //     );
+
+    camera1 = CameraServer.startAutomaticCapture(0);
+    camera2 = CameraServer.startAutomaticCapture(1);
+    camera1.setResolution(40, 30);
+    camera2.setResolution(40, 30);
+    camera1.setFPS(15);
+    camera2.setFPS(15);
+
     s_Swerve.setDefaultCommand(
         new TeleopSwerve(
             s_Swerve, 
             () -> -m_controller.getRawAxis(translationAxis) * s_Swerve.speedScalar(speedMode), 
             () -> -m_controller.getRawAxis(strafeAxis) * s_Swerve.speedScalar(speedMode), 
             () -> -m_controller.getRawAxis(rotationAxis) * s_Swerve.speedScalar(speedMode), 
-            () -> robotCentric.getAsBoolean()
+            () -> s_Swerve.getOrientationToggle()
         )
     );    
 
@@ -138,6 +174,8 @@ public class RobotContainer {
         .onTrue(Commands.runOnce(() -> {speedMode = 1;}));
       m_XBoxController.povDown()
         .onTrue(Commands.runOnce(() -> {speedMode = 2;}));
+    m_XBoxController.povLeft()
+      .onTrue(Commands.runOnce(m_ArmSubsystem::armLimiterOverride));
     m_XBoxController.rightStick()
         .onTrue(Commands.runOnce(s_Swerve::toggleOrientationMode));
 

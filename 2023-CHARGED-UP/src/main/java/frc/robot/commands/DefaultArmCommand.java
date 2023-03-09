@@ -41,12 +41,13 @@ public class DefaultArmCommand extends CommandBase {
             // m_ArmSubsystem.unsetWristHolding();
             // m_ArmSubsystem.setArmStates(m_wristLiftRateSupplier.getAsDouble(), 1);
             // m_ArmSubsystem.setWristHoldPosition();
-            m_ArmSubsystem.modifyWristHold(wristInput*(time - previousTime) * 0.0015);
+            m_ArmSubsystem.modifyWristHold(wristInput*(time - previousTime) * 10);
         }
         else
         {
             m_ArmSubsystem.setWristHolding();
         }
+        previousTime = time;
 
         if(armInput > 0)
         {
@@ -57,7 +58,7 @@ public class DefaultArmCommand extends CommandBase {
         else if(armInput2 > 0)
         {
             m_ArmSubsystem.unsetArmHolding();
-            m_ArmSubsystem.setArmStates(-(m_heightLowerRateSupplier.getAsDouble()), 0);
+            m_ArmSubsystem.setArmStates(-armInput2, 0);
             m_ArmSubsystem.armHoldSet(m_ArmSubsystem.getArmPosition());
         }
         else
