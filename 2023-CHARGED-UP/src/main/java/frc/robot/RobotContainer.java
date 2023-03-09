@@ -196,15 +196,15 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     TrajectoryConfig config = 
       new TrajectoryConfig(
-        Constants.AutoConstants.kMaxSpeedMetersPerSecond, 
+        Constants.AutoConstants.kMaxSpeedMetersPerSecond * 0.5, 
         Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared)
         .setKinematics(Constants.Swerve.swerveKinematics);
 
     Trajectory testTrajectory = 
       TrajectoryGenerator.generateTrajectory(
-        new Pose2d(0, 0, new Rotation2d( 0)), 
-        List.of(new Translation2d(1, 0)), 
-        new Pose2d(2, 0, new Rotation2d(0)), 
+        new Pose2d(0, 0, Rotation2d.fromRadians(0)), 
+        List.of(new Translation2d(1, 1), new Translation2d(2, 0)), 
+        new Pose2d(new Translation2d(1, -1), Rotation2d.fromRadians(0)), 
         config);
     
     var thetaController = 
@@ -250,12 +250,13 @@ public class RobotContainer {
     //     () -> {return }), 
     //     m_intakeSubsystem);
 
+    return swerveControllerCommand1
+      .andThen(() -> s_Swerve.drive(new Translation2d(0, 0), 0, true, false));
 
-
-    return raiseArm
-      .andThen(liftWrist);
-      //.andThen(swerveControllerCommand1
-      //.andThen(() -> s_Swerve.drive(new Translation2d(0, 0), 0, false, false)));
+    // return raiseArm
+    //   .andThen(liftWrist); 
+    //   .andThen(swerveControllerCommand1
+    //   .andThen(() -> s_Swerve.drive(new Translation2d(0, 0), 0, false, false)));
   }
 
   private static double deadband(double value, double deadband) {
