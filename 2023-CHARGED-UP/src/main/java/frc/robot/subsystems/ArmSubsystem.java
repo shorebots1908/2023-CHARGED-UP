@@ -29,7 +29,7 @@ public class ArmSubsystem extends SubsystemBase{
         }
     }
     
-    private double armSpeedLimit = 0.35;
+    private double armSpeedLimit = 0.45;
     private double wristSpeedLimit = 0.35;
     private double[] armStates = {0.0, 0.0};
 
@@ -46,17 +46,17 @@ public class ArmSubsystem extends SubsystemBase{
     private double motorRatios = 27.0 / 400.0;
     private double shoulderDeviation = 1;
     private double wristDeviation = 0.2;
-    private double wristMax = -23;
+    private double wristMax = -20;
     private double wristMin = 0;
-    private double[] HighPosition = {137, 11.45};
-    private double[] MidPosition = {120.8, 11};
+    private double[] HighPosition = {105, -13};
+    private double[] MidPosition = {85, -13};
     private double[] LowPosition = {24.7, 5.5};
     private double[] StowPosition = {0, 0};
     private double wristOffset = 0;
     private double currentHoldPosition;
     private double wristHoldPosition;
     private boolean armHolding = false;
-    private boolean wristHolding = false;
+    private boolean wristHolding = true;
     private double shoulderPosition1;
     private double shoulderPosition2;
     private double oldShoulderPosition;
@@ -164,6 +164,11 @@ public class ArmSubsystem extends SubsystemBase{
         armMotors.set(-armSpeedLimit * power);
     }
 
+    public void setWristPosition(double position) {
+        wristHoldPosition = position;
+        constrainWristPosition();
+    }
+
     public void wristMove(double power) 
     {
         wristMotor1.set(wristSpeedLimit * power);
@@ -195,6 +200,10 @@ public class ArmSubsystem extends SubsystemBase{
     }
     public void modifyWristHold(double addend){
         wristHoldPosition += addend;
+        constrainWristPosition();
+    }
+
+    public void constrainWristPosition() {
         if(wristHoldPosition < wristMax) {
             wristHoldPosition = wristMax;
         }

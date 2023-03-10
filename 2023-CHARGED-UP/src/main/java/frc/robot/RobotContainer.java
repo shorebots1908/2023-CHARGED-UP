@@ -31,6 +31,7 @@ import frc.robot.commands.DefaultArmCommand;
 // import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 
+import java.time.Instant;
 import java.util.List;
 
 // import java.util.function.Function;
@@ -200,21 +201,34 @@ public class RobotContainer {
         Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared)
         .setKinematics(Constants.Swerve.swerveKinematics);
 
-    Trajectory testTrajectory = 
-      TrajectoryGenerator.generateTrajectory(
-        new Pose2d(0, 0, Rotation2d.fromRadians(0)), 
-        List.of(new Translation2d(1, 1), new Translation2d(2, 0)), 
-        new Pose2d(new Translation2d(1, -1), Rotation2d.fromRadians(0)), 
-        config);
+    TrajectoryConfig reverseConfig = 
+      new TrajectoryConfig(
+        Constants.AutoConstants.kMaxSpeedMetersPerSecond * 0.5, 
+        Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared)
+        .setKinematics(Constants.Swerve.swerveKinematics)
+        .setReversed(true);
     
+    Trajectory reverseTrajectory = 
+      TrajectoryGenerator.generateTrajectory(
+        List.of(new Pose2d(0, 0, Rotation2d.fromRadians(0)), 
+        new Pose2d(new Translation2d(-1, 0), Rotation2d.fromRadians(0))), 
+        reverseConfig);
+
+    Trajectory advanceTrajectory = 
+      TrajectoryGenerator.generateTrajectory(
+        List.of(
+          new Pose2d(0, 0, Rotation2d.fromRadians(0)), 
+          new Pose2d(0.2159, 0, Rotation2d.fromRadians(0))), 
+          config);
+  
     var thetaController = 
       new ProfiledPIDController(
         Constants.AutoConstants.kPThetaController, 0 , 0, Constants.AutoConstants.kThetaControllerConstraints);
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
     
-    SwerveControllerCommand swerveControllerCommand1 = 
+    SwerveControllerCommand swerveControllerCommandReverse = 
       new SwerveControllerCommand(
-        testTrajectory, 
+        reverseTrajectory, 
         s_Swerve::getPose, 
         Constants.Swerve.swerveKinematics, 
         
@@ -224,20 +238,43 @@ public class RobotContainer {
         s_Swerve::setModuleStates,
         s_Swerve);
 
-    s_Swerve.resetOdometry(testTrajectory.getInitialPose());
+    SwerveControllerCommand swerveControllerCommandAdvance = 
+    new SwerveControllerCommand(
+      advanceTrajectory, 
+      s_Swerve::getPose, 
+      Constants.Swerve.swerveKinematics, 
+      
+      new PIDController(Constants.AutoConstants.kPXController, 0, 0), 
+      new PIDController(Constants.AutoConstants.kPXController, 0, 0), 
+      thetaController,
+      s_Swerve::setModuleStates,
+      s_Swerve);
+
+    InstantCommand advanceSetup = new InstantCommand(() -> {s_Swerve.resetOdometry(advanceTrajectory.getInitialPose());});
+    InstantCommand reverseSetup = new InstantCommand(() -> {s_Swerve.resetOdometry(reverseTrajectory.getInitialPose());});
 
     FunctionalCommand raiseArm = 
       new FunctionalCommand(
         () -> {}, 
-        () -> m_ArmSubsystem.armHoldSet(80), 
+        () -> {m_ArmSubsystem.armHoldSet(115);
+          m_ArmSubsystem.setArmHolding();}, 
         interrupted -> {m_ArmSubsystem.armHoldSet(m_ArmSubsystem.getCurrentShoulderPosition());}, 
-        () -> {return Math.abs(80 - m_ArmSubsystem.getCurrentShoulderPosition()) < 3;}, 
+        () -> {return Math.abs(115 - m_ArmSubsystem.getCurrentShoulderPosition()) < 3;}, 
         m_ArmSubsystem);
+
+    FunctionalCommand lowerArm = 
+      new FunctionalCommand(
+        () -> {},
+        () -> {m_ArmSubsystem.armHoldSet(85);},
+        interrupted -> {m_ArmSubsystem.armHoldSet(m_ArmSubsystem.getCurrentShoulderPosition());},
+        () -> {return Math.abs(85 - m_ArmSubsystem.getCurrentShoulderPosition()) < 3;}
+      );
 
     FunctionalCommand liftWrist = 
       new FunctionalCommand(
         () -> {}, 
-        () -> m_ArmSubsystem.wristHold(-13), 
+        () -> {m_ArmSubsystem.setWristPosition(-13);
+        m_ArmSubsystem.setWristHolding();}, 
         interrupted -> {m_ArmSubsystem.wristHold(m_ArmSubsystem.getCurrentWristPosition());}, 
         () -> {return Math.abs(-13 - m_ArmSubsystem.getCurrentWristPosition()) < 0.5;}, 
         m_ArmSubsystem);
@@ -250,13 +287,19 @@ public class RobotContainer {
     //     () -> {return }), 
     //     m_intakeSubsystem);
 
-    return swerveControllerCommand1
-      .andThen(() -> s_Swerve.drive(new Translation2d(0, 0), 0, true, false));
+    //0.2159 meters cube width.
+    // return swerveControllerCommand1
+    //   .andThen(() -> s_Swerve.drive(new Translation2d(0, 0), 0, true, false));
 
-    // return raiseArm
-    //   .andThen(liftWrist); 
-    //   .andThen(swerveControllerCommand1
-    //   .andThen(() -> s_Swerve.drive(new Translation2d(0, 0), 0, false, false)));
+    return raiseArm
+      .andThen(liftWrist)
+      .andThen(advanceSetup)
+      .andThen(swerveControllerCommandAdvance)
+      .andThen(lowerArm)
+      .andThen(reverseSetup)
+      .andThen(swerveControllerCommandReverse); 
+      // .andThen(swerveControllerCommand1)
+      // .andThen(() -> s_Swerve.drive(new Translation2d(0, 0), 0, false, false));
   }
 
   private static double deadband(double value, double deadband) {
