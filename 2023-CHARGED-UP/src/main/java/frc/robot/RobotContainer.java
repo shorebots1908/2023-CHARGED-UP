@@ -116,8 +116,8 @@ public class RobotContainer {
     camera2.setFPS(15);
 
     autoSelector.setDefaultOption("Drive Forward", "Default");
-    autoSelector.addOption("Drive Forward", "Default");
-    autoSelector.addOption("Drive Forward", "Default");
+    autoSelector.addOption("Place Cone No Escape", "NoEscape");
+    autoSelector.addOption("Place Cone W/ Escape", "Escape");
 
     s_Swerve.setDefaultCommand(
         new TeleopSwerve(
@@ -298,13 +298,47 @@ public class RobotContainer {
     // return swerveControllerCommand1
     //   .andThen(() -> s_Swerve.drive(new Translation2d(0, 0), 0, true, false));
 
-    return raiseArm
+    Command autoMode = null;
+    switch(autoSelector.getSelected()){
+      case "Default":
+        autoMode = raiseArm
+        .andThen(liftWrist)
+        .andThen(advanceSetup)
+        .andThen(swerveControllerCommandAdvance)
+        .andThen(lowerArm);
+        break;
+      case "NoEscape":
+        autoMode = raiseArm
+        .andThen(liftWrist)
+        .andThen(advanceSetup)
+        .andThen(swerveControllerCommandAdvance)
+        .andThen(lowerArm)
+        .andThen(reverseSetup)
+        .andThen(swerveControllerCommandReverse);
+        break;
+      case "Escape":
+      autoMode = raiseArm
+        .andThen(liftWrist)
+        .andThen(advanceSetup)
+        .andThen(swerveControllerCommandAdvance)
+        .andThen(lowerArm)
+        .andThen(reverseSetup)
+        .andThen(swerveControllerCommandReverse)
+        .andThen(swerveControllerCommandReverse)
+        .andThen(swerveControllerCommandReverse)
+        .andThen(swerveControllerCommandReverse);
+        break;
+    }
+
+    return autoMode;
+
+    /* return raiseArm
       .andThen(liftWrist)
       .andThen(advanceSetup)
       .andThen(swerveControllerCommandAdvance)
       .andThen(lowerArm)
       .andThen(reverseSetup)
-      .andThen(swerveControllerCommandReverse); 
+      .andThen(swerveControllerCommandReverse);  */
       // .andThen(swerveControllerCommand1)
       // .andThen(() -> s_Swerve.drive(new Translation2d(0, 0), 0, false, false));
   }
