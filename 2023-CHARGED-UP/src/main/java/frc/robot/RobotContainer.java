@@ -7,6 +7,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -63,6 +64,8 @@ public class RobotContainer {
   private UsbCamera camera1;
   private UsbCamera camera2;
 
+  private final SendableChooser<String> autoSelector = new SendableChooser();
+
   /* Driver Buttons */
   // private final JoystickButton zeroGyro = new JoystickButton(m_controller, XboxController.Button.kBack.value);
   //private final JoystickButton robotCentric = new JoystickButton(m_controller, XboxController.Button.kLeftBumper.value);
@@ -111,6 +114,10 @@ public class RobotContainer {
     camera2.setResolution(40, 30);
     camera1.setFPS(15);
     camera2.setFPS(15);
+
+    autoSelector.setDefaultOption("Drive Forward", "Default");
+    autoSelector.setDefaultOption("Drive Forward", "Default");
+    autoSelector.setDefaultOption("Drive Forward", "Default");
 
     s_Swerve.setDefaultCommand(
         new TeleopSwerve(
