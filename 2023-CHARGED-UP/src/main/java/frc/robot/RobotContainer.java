@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -119,6 +120,8 @@ public class RobotContainer {
     autoSelector.addOption("Place Cone No Escape", "NoEscape");
     autoSelector.addOption("Place Cone W/ Escape", "Escape");
 
+    SmartDashboard.putData("Auto Mode", autoSelector);
+
     s_Swerve.setDefaultCommand(
         new TeleopSwerve(
             s_Swerve, 
@@ -218,7 +221,7 @@ public class RobotContainer {
     Trajectory reverseTrajectory = 
       TrajectoryGenerator.generateTrajectory(
         List.of(new Pose2d(0, 0, Rotation2d.fromRadians(0)), 
-        new Pose2d(new Translation2d(-1, 0), Rotation2d.fromRadians(0))), 
+        new Pose2d(new Translation2d(-0.8, 0), Rotation2d.fromRadians(0))), 
         reverseConfig);
 
     Trajectory advanceTrajectory = 
@@ -298,39 +301,32 @@ public class RobotContainer {
     // return swerveControllerCommand1
     //   .andThen(() -> s_Swerve.drive(new Translation2d(0, 0), 0, true, false));
 
-    Command autoMode = null;
-    switch(autoSelector.getSelected()){
-      case "Default":
-        autoMode = raiseArm
-        .andThen(liftWrist)
-        .andThen(advanceSetup)
-        .andThen(swerveControllerCommandAdvance)
-        .andThen(lowerArm);
-        break;
-      case "NoEscape":
-        autoMode = raiseArm
-        .andThen(liftWrist)
-        .andThen(advanceSetup)
-        .andThen(swerveControllerCommandAdvance)
-        .andThen(lowerArm)
-        .andThen(reverseSetup)
-        .andThen(swerveControllerCommandReverse);
-        break;
+    //Command autoMode = null;
+    String selectedAuto = autoSelector.getSelected(); 
+    System.out.println("Selected Auto: " + selectedAuto);
+    switch(selectedAuto){
+      case "Default": case "NoEscape":
+        return raiseArm
+          .andThen(liftWrist)
+          .andThen(advanceSetup)
+          .andThen(swerveControllerCommandAdvance)
+          .andThen(lowerArm)
+          .andThen(reverseSetup)
+          .andThen(swerveControllerCommandReverse);
       case "Escape":
-      autoMode = raiseArm
-        .andThen(liftWrist)
-        .andThen(advanceSetup)
-        .andThen(swerveControllerCommandAdvance)
-        .andThen(lowerArm)
-        .andThen(reverseSetup)
-        .andThen(swerveControllerCommandReverse)
-        .andThen(swerveControllerCommandReverse)
-        .andThen(swerveControllerCommandReverse)
-        .andThen(swerveControllerCommandReverse);
-        break;
+        return  raiseArm
+          .andThen(liftWrist)
+          .andThen(advanceSetup)
+          .andThen(swerveControllerCommandAdvance)
+          .andThen(lowerArm)
+          .andThen(reverseSetup)
+          .andThen(swerveControllerCommandReverse)
+          .andThen(swerveControllerCommandReverse)
+          .andThen(swerveControllerCommandReverse)
+          .andThen(swerveControllerCommandReverse);
     }
 
-    return autoMode;
+    //return autoMode;
 
     /* return raiseArm
       .andThen(liftWrist)
