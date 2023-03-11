@@ -116,8 +116,8 @@ public class RobotContainer {
     camera2.setFPS(15);
 
     autoSelector.setDefaultOption("Drive Forward", "Default");
-    autoSelector.setDefaultOption("Drive Forward", "Default");
-    autoSelector.setDefaultOption("Drive Forward", "Default");
+    autoSelector.addOption("Drive Forward", "Default");
+    autoSelector.addOption("Drive Forward", "Default");
 
     s_Swerve.setDefaultCommand(
         new TeleopSwerve(
