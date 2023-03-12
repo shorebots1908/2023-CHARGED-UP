@@ -143,6 +143,7 @@ public class Swerve extends SubsystemBase {
 
         //put gyro yaw on the dashboard to help with calibration.
         SmartDashboard.putNumber("Reported Yaw", gyro.getYaw());
+        SmartDashboard.putNumber("Reported Pitch", gyro.getPitch());
 
         for(SwerveModule mod : mSwerveMods){
             SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Cancoder", mod.getCanCoder().getDegrees());
