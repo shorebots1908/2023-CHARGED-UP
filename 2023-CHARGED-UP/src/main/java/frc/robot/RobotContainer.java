@@ -26,9 +26,6 @@ import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import frc.robot.Constants;
 // import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-// import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-// import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.commands.DefaultArmCommand;
 // import frc.robot.commands.DefaultDriveCommand;
 // import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -43,6 +40,8 @@ import edu.wpi.first.cscore.UsbCamera;
 // import edu.wpi.first.math.filter.SlewRateLimiter;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.Swerve;
+// import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+// import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.*;
 
 /**
@@ -229,6 +228,12 @@ public class RobotContainer {
         List.of(new Pose2d(0, 0, Rotation2d.fromRadians(0)), 
         new Pose2d(new Translation2d(-4, 0), Rotation2d.fromRadians(0))), 
         reverseConfig);
+    
+    Trajectory reverseTrajectoryBalance = 
+      TrajectoryGenerator.generateTrajectory(
+        List.of(new Pose2d(0, 0, Rotation2d.fromRadians(0)), 
+        new Pose2d(new Translation2d(-1.5, 0), Rotation2d.fromRadians(0))), 
+        reverseConfig);
 
     Trajectory advanceTrajectory = 
       TrajectoryGenerator.generateTrajectory(
@@ -257,6 +262,18 @@ public class RobotContainer {
     SwerveControllerCommand swerveControllerCommandReverseEscape = 
       new SwerveControllerCommand(
         reverseTrajectoryEscape, 
+        s_Swerve::getPose, 
+        Constants.Swerve.swerveKinematics, 
+        
+        new PIDController(Constants.AutoConstants.kPXController, 0, 0), 
+        new PIDController(Constants.AutoConstants.kPXController, 0, 0), 
+        thetaController,
+        s_Swerve::setModuleStates,
+        s_Swerve);
+    
+        SwerveControllerCommand swerveControllerCommandReverseBalance = 
+      new SwerveControllerCommand(
+        reverseTrajectoryBalance, 
         s_Swerve::getPose, 
         Constants.Swerve.swerveKinematics, 
         
@@ -319,7 +336,7 @@ public class RobotContainer {
     // return swerveControllerCommand1
     //   .andThen(() -> s_Swerve.drive(new Translation2d(0, 0), 0, true, false));
 
-    //Command autoMode = null;
+    
     String selectedAuto = autoSelector.getSelected(); 
     System.out.println("Selected Auto: " + selectedAuto);
     switch(selectedAuto){
@@ -339,9 +356,12 @@ public class RobotContainer {
           .andThen(lowerArm)
           .andThen(reverseSetup)
           .andThen(swerveControllerCommandReverseEscape);
+      case "AutoBalance":
+        return swerveControllerCommandReverseBalance
+        .andThen(new AutoBalanceSwerve(s_Swerve));
+          
     }
 
-    //return autoMode;
 
     /* return raiseArm
       .andThen(liftWrist)
