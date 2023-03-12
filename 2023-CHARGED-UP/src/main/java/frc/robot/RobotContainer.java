@@ -233,7 +233,7 @@ public class RobotContainer {
     Trajectory reverseTrajectoryBalance = 
       TrajectoryGenerator.generateTrajectory(
         List.of(new Pose2d(0, 0, Rotation2d.fromRadians(0)), 
-        new Pose2d(new Translation2d(-1.5, 0), Rotation2d.fromRadians(0))), 
+        new Pose2d(new Translation2d(-1.7, 0), Rotation2d.fromRadians(0))), 
         reverseConfig);
 
     Trajectory advanceTrajectory = 

@@ -2,6 +2,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
@@ -24,6 +25,8 @@ public class AutoBalanceSwerve extends CommandBase{
     private boolean fieldrelative = true;
     private boolean openLoop = false;
     private boolean isFinished = false;
+    private double startHeading = 0;
+    private boolean IsRedAlliance = DriverStation.getAlliance().equals(DriverStation.Alliance.Red);
 
     
     private final PIDController headingController = 
@@ -47,21 +50,24 @@ public class AutoBalanceSwerve extends CommandBase{
     @Override
     public void initialize() {
         isFinished = false;
+        startHeading = (IsRedAlliance)? 180 : 0;
         //s_Swerve.setLockWheels(true);
     }
     @Override
     public void execute() {
 
- 
+        
 
-        rotation = headingController.calculate(s_Swerve.getYaw().getDegrees(), desiredHeading);  
-        if (s_Swerve.getPitch() > 9) {
-            translation = new Translation2d(-0.3, 0.0); // Speed is in Meters/s
-        } else if (s_Swerve.getPitch() < -9) {
-            translation = new Translation2d(0.3, 0);
+        rotation = headingController.calculate(0, desiredHeading);  
+        if (s_Swerve.getPitch() > 8) {
+            translation = new Translation2d(-0.2, 0.0); // Speed is in Meters/s
+            System.out.println("Auto Balance + Translation:" + translation + " Pitch: " + s_Swerve.getPitch() + " Rotation: " + rotation);
+        } else if (s_Swerve.getPitch() < -8) {
+            translation = new Translation2d(0.2, 0);
+            System.out.println("Auto Balance - Translation:" + translation + " Pitch: " + s_Swerve.getPitch() + " Rotation: " + rotation);
         } else {
             translation = new Translation2d(0 , 0);
-            if(Timer.getMatchTime() <= 0.1) {
+            if(Timer.getMatchTime() >= 15) {
                 //s_Swerve.setLockWheels(false);
                 isFinished = true;
             }

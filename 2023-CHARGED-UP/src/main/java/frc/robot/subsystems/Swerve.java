@@ -128,7 +128,7 @@ public class Swerve extends SubsystemBase {
     }
 
     public float getPitch(){
-        return gyro.getRoll();
+        return gyro.getPitch();
     }
 
     public void resetModulesToAbsolute(){
