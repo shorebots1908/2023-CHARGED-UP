@@ -118,6 +118,7 @@ public class RobotContainer {
     autoSelector.setDefaultOption("Default - No Escape", "Default");
     autoSelector.addOption("No Escape", "NoEscape");
     autoSelector.addOption("Escape", "Escape");
+    autoSelector.addOption("Balance", "AutoBalance");
 
     SmartDashboard.putData("Auto Mode", autoSelector);
 
