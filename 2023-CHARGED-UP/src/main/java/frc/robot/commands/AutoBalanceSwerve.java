@@ -8,6 +8,15 @@ import frc.robot.Constants;
 
 import frc.robot.subsystems.Swerve;
 
+/**
+ * AutoBalanceSwerve
+ * Moved forward and back depending on gyro tilt/pitch inorder to keep robot on a tilting platform
+ * @author FRC Team 1731
+ * @url https://github.com/team1731/FRC2023/blob/main/ROBOT_CODE/AlexanderGCowbell/src/main/java/frc/robot/commands/AutoBalanceSwerve.java
+ * 
+ * Suggested we try there code out so here it is. Thanks guys!
+ * 
+ */
 public class AutoBalanceSwerve extends CommandBase{
 
 
