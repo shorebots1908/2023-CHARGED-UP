@@ -116,9 +116,9 @@ public class RobotContainer {
     camera1.setFPS(15);
     camera2.setFPS(15);
 
-    autoSelector.setDefaultOption("Drive Forward", "Default");
-    autoSelector.addOption("Place Cone No Escape", "NoEscape");
-    autoSelector.addOption("Place Cone W/ Escape", "Escape");
+    autoSelector.setDefaultOption("Default - No Escape", "Default");
+    autoSelector.addOption("No Escape", "NoEscape");
+    autoSelector.addOption("Escape", "Escape");
 
     SmartDashboard.putData("Auto Mode", autoSelector);
 
@@ -221,7 +221,13 @@ public class RobotContainer {
     Trajectory reverseTrajectory = 
       TrajectoryGenerator.generateTrajectory(
         List.of(new Pose2d(0, 0, Rotation2d.fromRadians(0)), 
-        new Pose2d(new Translation2d(-0.8, 0), Rotation2d.fromRadians(0))), 
+        new Pose2d(new Translation2d(-0.6, 0), Rotation2d.fromRadians(0))), 
+        reverseConfig);
+    
+    Trajectory reverseTrajectoryEscape = 
+      TrajectoryGenerator.generateTrajectory(
+        List.of(new Pose2d(0, 0, Rotation2d.fromRadians(0)), 
+        new Pose2d(new Translation2d(-4, 0), Rotation2d.fromRadians(0))), 
         reverseConfig);
 
     Trajectory advanceTrajectory = 
@@ -239,6 +245,18 @@ public class RobotContainer {
     SwerveControllerCommand swerveControllerCommandReverse = 
       new SwerveControllerCommand(
         reverseTrajectory, 
+        s_Swerve::getPose, 
+        Constants.Swerve.swerveKinematics, 
+        
+        new PIDController(Constants.AutoConstants.kPXController, 0, 0), 
+        new PIDController(Constants.AutoConstants.kPXController, 0, 0), 
+        thetaController,
+        s_Swerve::setModuleStates,
+        s_Swerve);
+    
+    SwerveControllerCommand swerveControllerCommandReverseEscape = 
+      new SwerveControllerCommand(
+        reverseTrajectoryEscape, 
         s_Swerve::getPose, 
         Constants.Swerve.swerveKinematics, 
         
@@ -305,7 +323,7 @@ public class RobotContainer {
     String selectedAuto = autoSelector.getSelected(); 
     System.out.println("Selected Auto: " + selectedAuto);
     switch(selectedAuto){
-      case "Default": case "NoEscape":
+      case "Default": case "NoEscape": default:
         return raiseArm
           .andThen(liftWrist)
           .andThen(advanceSetup)
@@ -320,10 +338,7 @@ public class RobotContainer {
           .andThen(swerveControllerCommandAdvance)
           .andThen(lowerArm)
           .andThen(reverseSetup)
-          .andThen(swerveControllerCommandReverse)
-          .andThen(swerveControllerCommandReverse)
-          .andThen(swerveControllerCommandReverse)
-          .andThen(swerveControllerCommandReverse);
+          .andThen(swerveControllerCommandReverseEscape);
     }
 
     //return autoMode;

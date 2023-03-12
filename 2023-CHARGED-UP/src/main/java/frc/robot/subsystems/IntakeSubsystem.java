@@ -25,14 +25,14 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 public class IntakeSubsystem extends SubsystemBase {
     private CANSparkMax m_intakeMotor1 = new CANSparkMax(16, MotorType.kBrushless);
     private CANSparkMax m_intakeMotor2 = new CANSparkMax(17, MotorType.kBrushless);
-    private double intakeSpeed = 0.30;
-    private double intakeEject = 0.32;
+    private double intakeSpeed = 0.80;
+    private double intakeEject = 0.6;
     private boolean runIntake = false;
     private boolean runReverse = false;
     private RelativeEncoder encoder1, encoder2;
     private Ultrasonic m_ultrasonic = new Ultrasonic(1,2);
     private double timeCheck;
-    private double minRPM = 0.5;
+    private double minRPM = 0.3;
 
     private MotorControllerGroup m_intakeMotors = new MotorControllerGroup(m_intakeMotor1, m_intakeMotor2);
 
@@ -54,6 +54,10 @@ public class IntakeSubsystem extends SubsystemBase {
     public void intakeStop() {
         runIntake = false;
         m_intakeMotors.set(0);
+    }
+    
+    public void intakeHold() {
+        m_intakeMotors.set(0.1);
     }
     
     public void intake(){
@@ -80,9 +84,13 @@ public class IntakeSubsystem extends SubsystemBase {
     {
         if(runIntake){
             m_intakeMotors.set(intakeSpeed);
-            if(Timer.getFPGATimestamp() - timeCheck > 0.5){
+            if(Timer.getFPGATimestamp() - timeCheck > 0.5){//Hold intake motor at low speed
                 if(Math.abs(encoder1.getVelocity()) < minRPM || Math.abs(encoder2.getVelocity()) < minRPM) {
-                    intakeStop();
+                    if(Timer.getFPGATimestamp() - timeCheck > 40){ //Stop after 60 seconds
+                        intakeStop();
+                    } else {
+                        intakeHold(); 
+                    }
                 }
             }
         }

@@ -46,8 +46,8 @@ public class ArmSubsystem extends SubsystemBase{
     private double motorRatios = 27.0 / 400.0;
     private double shoulderDeviation = 1;
     private double wristDeviation = 0.2;
-    private double wristMax = -20;
-    private double wristMin = 0;
+    private double wristMax = -22;
+    private double wristMin = 2;
     private double[] HighPosition = {105, -13};
     private double[] MidPosition = {85, -13};
     private double[] LowPosition = {24.7, 5.5};
@@ -116,6 +116,12 @@ public class ArmSubsystem extends SubsystemBase{
         SmartDashboard.putNumber("Middle Position", MidPosition[0]);
         SmartDashboard.putNumber("Lower Position", LowPosition[0]);
         SmartDashboard.putNumber("Stowed Position", StowPosition[0]);
+
+        wristMin = SmartDashboard.getNumber("Wrist Min", wristMin);
+        wristMax = SmartDashboard.getNumber("Wrist Max", wristMax);
+        SmartDashboard.putNumber("Wrist Min", wristMin);
+        SmartDashboard.putNumber("Wrist Max", wristMax);
+        
 
         wristOffset = SmartDashboard.getNumber("Wrist Offset", wristOffset);
         SmartDashboard.putNumber("Wrist Offset", wristOffset);
@@ -204,6 +210,8 @@ public class ArmSubsystem extends SubsystemBase{
     }
 
     public void constrainWristPosition() {
+        wristMin = SmartDashboard.getNumber("Wrist Min", wristMin);
+        wristMax = SmartDashboard.getNumber("Wrist Max", wristMax);
         if(wristHoldPosition < wristMax) {
             wristHoldPosition = wristMax;
         }
