@@ -1,6 +1,9 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.PneumaticHub;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Timer;
 // import edu.wpi.first.wpilibj.GenericHID;
 // import edu.wpi.first.wpilibj.XboxController;
@@ -16,7 +19,11 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.motorcontrol.PWMTalonFX;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value.*;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
+import java.lang.ModuleLayer.Controller;
 
 import com.revrobotics.*;
 import com.revrobotics.CANSparkMax.IdleMode;
@@ -33,6 +40,9 @@ public class IntakeSubsystem extends SubsystemBase {
     private Ultrasonic m_ultrasonic = new Ultrasonic(1,2);
     private double timeCheck;
     private double minRPM = 0.3;
+    private boolean cubeMode = false;
+    private boolean coneMode = true;
+    private DoubleSolenoid solenoid1 = new DoubleSolenoid(18, PneumaticsModuleType.REVPH, 0, 1);
 
     private MotorControllerGroup m_intakeMotors = new MotorControllerGroup(m_intakeMotor1, m_intakeMotor2);
 
@@ -48,9 +58,20 @@ public class IntakeSubsystem extends SubsystemBase {
         m_intakeMotor2.setSmartCurrentLimit(20);
         encoder1 = m_intakeMotor1.getEncoder();
         encoder2 = m_intakeMotor2.getEncoder();
+        solenoid1.set(Value.kOff);
     }
     
-    
+    public void setCubeMode(){
+        cubeMode = true;
+        coneMode = false;
+        solenoid1.set(Value.kForward);
+    }
+    public void setConeMode(){
+        cubeMode = false;
+        coneMode = true;
+        solenoid1.set(Value.kOff);
+    }   
+
     public void intakeStop() {
         runIntake = false;
         m_intakeMotors.set(0);
@@ -73,6 +94,10 @@ public class IntakeSubsystem extends SubsystemBase {
         runIntake = false;
         runReverse = true;
         m_intakeMotors.set(-intakeEject);
+        if(coneMode)
+        {
+            solenoid1.set(Value.kOff);
+        }
     }
     
     public void intakeReverseRelease() {
@@ -88,8 +113,13 @@ public class IntakeSubsystem extends SubsystemBase {
                 if(Math.abs(encoder1.getVelocity()) < minRPM || Math.abs(encoder2.getVelocity()) < minRPM) {
                     if(Timer.getFPGATimestamp() - timeCheck > 40){ //Stop after 60 seconds
                         intakeStop();
-                    } else {
+                    }
+                    else if(cubeMode) {
                         intakeHold(); 
+                    }
+                    else if(coneMode){
+                        intakeStop();
+                        solenoid1.set(Value.kReverse);
                     }
                 }
             }
