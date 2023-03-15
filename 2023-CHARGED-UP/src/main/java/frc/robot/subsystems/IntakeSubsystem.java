@@ -42,6 +42,7 @@ public class IntakeSubsystem extends SubsystemBase {
     private double minRPM = 0.3;
     private boolean cubeMode = false;
     private boolean coneMode = true;
+    ///swap the ports on the solenoids (forwardChannel and reverseChannel) if the piston is going the wrong way.
     private DoubleSolenoid solenoid1 = new DoubleSolenoid(18, PneumaticsModuleType.REVPH, 0, 1);
 
     private MotorControllerGroup m_intakeMotors = new MotorControllerGroup(m_intakeMotor1, m_intakeMotor2);
@@ -64,12 +65,12 @@ public class IntakeSubsystem extends SubsystemBase {
     public void setCubeMode(){
         cubeMode = true;
         coneMode = false;
-        solenoid1.set(Value.kForward);
+        solenoid1.set(Value.kReverse);
     }
     public void setConeMode(){
         cubeMode = false;
         coneMode = true;
-        solenoid1.set(Value.kOff);
+        solenoid1.set(Value.kForward);
     }   
 
     public void intakeStop() {
@@ -96,7 +97,7 @@ public class IntakeSubsystem extends SubsystemBase {
         m_intakeMotors.set(-intakeEject);
         if(coneMode)
         {
-            solenoid1.set(Value.kOff);
+            solenoid1.set(Value.kReverse);
         }
     }
     
@@ -119,7 +120,6 @@ public class IntakeSubsystem extends SubsystemBase {
                     }
                     else if(coneMode){
                         intakeStop();
-                        solenoid1.set(Value.kReverse);
                     }
                 }
             }
