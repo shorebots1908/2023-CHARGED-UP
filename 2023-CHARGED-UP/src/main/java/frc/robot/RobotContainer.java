@@ -119,6 +119,7 @@ public class RobotContainer {
     autoSelector.addOption("No Escape", "NoEscape");
     autoSelector.addOption("Escape", "Escape");
     autoSelector.addOption("Balance", "AutoBalance");
+    autoSelector.addOption("ConeBalance", "ConeBalance");
 
     SmartDashboard.putData("Auto Mode", autoSelector);
 
@@ -357,6 +358,15 @@ public class RobotContainer {
           .andThen(lowerArm)
           .andThen(reverseSetup)
           .andThen(swerveControllerCommandReverseEscape);
+      case "ConeBalance":
+        return  raiseArm
+          .andThen(liftWrist)
+          .andThen(advanceSetup)
+          .andThen(swerveControllerCommandAdvance)
+          .andThen(lowerArm)
+          .andThen(reverseSetup)
+          .andThen(swerveControllerCommandReverseBalance)
+          .andThen(new AutoBalanceSwerve(s_Swerve));
       case "AutoBalance":
         return swerveControllerCommandReverseBalance
         .andThen(new AutoBalanceSwerve(s_Swerve));
