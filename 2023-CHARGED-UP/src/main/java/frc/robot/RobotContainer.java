@@ -164,29 +164,9 @@ public class RobotContainer {
         m_intakeSubsystem::intakeReverseRelease,
         m_intakeSubsystem));
     m_XBoxController.a()
-      .onTrue(Commands.runOnce(() -> {
-        m_ArmSubsystem.armHoldSet(m_ArmSubsystem.getLowPosition(0));
-        m_ArmSubsystem.wristHold(m_ArmSubsystem.getLowPosition(1));
-        m_ArmSubsystem.setArmHolding();
-      }));
+      .onTrue(Commands.runOnce(m_intakeSubsystem::setConeMode));
     m_XBoxController.b()
-      .onTrue(Commands.runOnce(() -> {
-        m_ArmSubsystem.armHoldSet(m_ArmSubsystem.getMidPosition(0));
-        m_ArmSubsystem.wristHold(m_ArmSubsystem.getMidPosition(1));
-        m_ArmSubsystem.setArmHolding();
-      }));
-    m_XBoxController.x()
-      .onTrue(Commands.runOnce(() -> {
-        m_ArmSubsystem.armHoldSet(m_ArmSubsystem.getStowPosition(0));
-        m_ArmSubsystem.wristHold(m_ArmSubsystem.getStowPosition(1));
-        m_ArmSubsystem.setArmHolding();
-      }));
-    m_XBoxController.y()
-      .onTrue(Commands.runOnce(() -> {
-        m_ArmSubsystem.armHoldSet(m_ArmSubsystem.getHighPosition(0));
-        m_ArmSubsystem.wristHold(m_ArmSubsystem.getHighPosition(1));
-        m_ArmSubsystem.setArmHolding();
-      }));
+      .onTrue(Commands.runOnce(m_intakeSubsystem::setCubeMode));
       m_XBoxController.povUp()
         .onTrue(Commands.runOnce(() -> {speedMode = 0;}));
       m_XBoxController.povRight()

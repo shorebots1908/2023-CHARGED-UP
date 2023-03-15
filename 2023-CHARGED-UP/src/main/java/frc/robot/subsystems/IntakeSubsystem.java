@@ -1,6 +1,9 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Timer;
 // import edu.wpi.first.wpilibj.GenericHID;
 // import edu.wpi.first.wpilibj.XboxController;
@@ -33,6 +36,9 @@ public class IntakeSubsystem extends SubsystemBase {
     private Ultrasonic m_ultrasonic = new Ultrasonic(1,2);
     private double timeCheck;
     private double minRPM = 0.3;
+    private DoubleSolenoid solenoid1 = new DoubleSolenoid(18, PneumaticsModuleType.REVPH, 0, 1);
+    private boolean cubeMode = false;
+    private boolean coneMode = true;
 
     private MotorControllerGroup m_intakeMotors = new MotorControllerGroup(m_intakeMotor1, m_intakeMotor2);
 
@@ -48,9 +54,21 @@ public class IntakeSubsystem extends SubsystemBase {
         m_intakeMotor2.setSmartCurrentLimit(20);
         encoder1 = m_intakeMotor1.getEncoder();
         encoder2 = m_intakeMotor2.getEncoder();
+        solenoid1.set(DoubleSolenoid.Value.kOff);
     }
     
-    
+    public void setCubeMode(){
+        cubeMode = true;
+        coneMode = false;
+        solenoid1.set(DoubleSolenoid.Value.kForward);
+    }
+
+    public void setConeMode(){
+        coneMode = true;
+        cubeMode = false;
+        solenoid1.set(DoubleSolenoid.Value.kOff);
+    }
+
     public void intakeStop() {
         runIntake = false;
         m_intakeMotors.set(0);
@@ -72,6 +90,10 @@ public class IntakeSubsystem extends SubsystemBase {
     {
         runIntake = false;
         runReverse = true;
+        if(coneMode)
+        {
+            solenoid1.set(DoubleSolenoid.Value.kOff);
+        }
         m_intakeMotors.set(-intakeEject);
     }
     
@@ -88,14 +110,22 @@ public class IntakeSubsystem extends SubsystemBase {
                 if(Math.abs(encoder1.getVelocity()) < minRPM || Math.abs(encoder2.getVelocity()) < minRPM) {
                     if(Timer.getFPGATimestamp() - timeCheck > 40){ //Stop after 60 seconds
                         intakeStop();
-                    } else {
+                    } 
+                    else if(cubeMode)
+                    {
                         intakeHold(); 
+                    }
+                    else if(coneMode)
+                    {
+                        intakeStop();
+                        solenoid1.set(DoubleSolenoid.Value.kReverse);
                     }
                 }
             }
         }
         else {
             //TODO: add functionality to pull piece back in if the intake motors are letting it slip out. 
+
             if(!runReverse){
                 intakeStop();
             }
