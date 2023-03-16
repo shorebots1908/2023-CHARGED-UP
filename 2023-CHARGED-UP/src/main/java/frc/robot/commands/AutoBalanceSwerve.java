@@ -63,7 +63,7 @@ public class AutoBalanceSwerve extends CommandBase{
             translation = new Translation2d(-0.2, 0.0); // Speed is in Meters/s
             System.out.println("Auto Balance + Translation:" + translation + " Pitch: " + s_Swerve.getPitch() + " Rotation: " + rotation);
         } else if (s_Swerve.getPitch() < -8) {
-            translation = new Translation2d(0.2, 0);
+            translation = new Translation2d(0.15, 0);
             System.out.println("Auto Balance - Translation:" + translation + " Pitch: " + s_Swerve.getPitch() + " Rotation: " + rotation);
         } else {
             translation = new Translation2d(0 , 0);

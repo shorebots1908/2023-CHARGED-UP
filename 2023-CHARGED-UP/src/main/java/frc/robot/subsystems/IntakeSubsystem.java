@@ -59,7 +59,7 @@ public class IntakeSubsystem extends SubsystemBase {
         m_intakeMotor2.setSmartCurrentLimit(20);
         encoder1 = m_intakeMotor1.getEncoder();
         encoder2 = m_intakeMotor2.getEncoder();
-        solenoid1.set(Value.kOff);
+        solenoid1.set(Value.kForward);
     }
     
     public void setCubeMode(){

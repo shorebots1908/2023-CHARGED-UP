@@ -167,12 +167,12 @@ public class RobotContainer {
       .onTrue(Commands.runOnce(m_intakeSubsystem::setConeMode));
     m_XBoxController.b()
       .onTrue(Commands.runOnce(m_intakeSubsystem::setCubeMode));
-    // m_XBoxController.x()
-    //   .onTrue(Commands.runOnce(() -> {
-    //     m_ArmSubsystem.armHoldSet(m_ArmSubsystem.getStowPosition(0));
-    //     m_ArmSubsystem.wristHold(m_ArmSubsystem.getStowPosition(1));
-    //     m_ArmSubsystem.setArmHolding();
-    //   }));
+    m_XBoxController.x()
+      .onTrue(Commands.runOnce(() -> {
+        m_ArmSubsystem.armHoldSet(46);
+        m_ArmSubsystem.setWristPosition(-19.2);
+        m_ArmSubsystem.setArmHolding();
+      }));
     // m_XBoxController.y()
     //   .onTrue(Commands.runOnce(() -> {
     //     m_ArmSubsystem.armHoldSet(m_ArmSubsystem.getHighPosition(0));
@@ -226,7 +226,7 @@ public class RobotContainer {
     Trajectory reverseTrajectoryBalance = 
       TrajectoryGenerator.generateTrajectory(
         List.of(new Pose2d(0, 0, Rotation2d.fromRadians(0)), 
-        new Pose2d(new Translation2d(-1.7, 0), Rotation2d.fromRadians(0))), 
+        new Pose2d(new Translation2d(-1.8, 0), Rotation2d.fromRadians(0))), 
         reverseConfig);
 
     Trajectory advanceTrajectory = 
@@ -291,6 +291,16 @@ public class RobotContainer {
 
     InstantCommand advanceSetup = new InstantCommand(() -> {s_Swerve.resetOdometry(advanceTrajectory.getInitialPose());});
     InstantCommand reverseSetup = new InstantCommand(() -> {s_Swerve.resetOdometry(reverseTrajectory.getInitialPose());});
+    InstantCommand openIntake = new InstantCommand(m_intakeSubsystem::setCubeMode);
+    FunctionalCommand dropArm = new FunctionalCommand(
+      () -> {}, 
+      () -> {
+        m_ArmSubsystem.armHoldSet(45);
+        m_ArmSubsystem.setArmHolding();
+      }, 
+      interrupted -> {m_ArmSubsystem.armHoldSet(m_ArmSubsystem.getCurrentShoulderPosition());}, 
+      () -> {return Math.abs(45 - m_ArmSubsystem.getCurrentShoulderPosition()) < 3;},
+      m_ArmSubsystem);
 
     FunctionalCommand raiseArm = 
       new FunctionalCommand(
@@ -340,6 +350,7 @@ public class RobotContainer {
           .andThen(advanceSetup)
           .andThen(swerveControllerCommandAdvance)
           .andThen(lowerArm)
+          .andThen(openIntake)
           .andThen(reverseSetup)
           .andThen(swerveControllerCommandReverse);
       case "Escape":
@@ -348,6 +359,7 @@ public class RobotContainer {
           .andThen(advanceSetup)
           .andThen(swerveControllerCommandAdvance)
           .andThen(lowerArm)
+          .andThen(openIntake)
           .andThen(reverseSetup)
           .andThen(swerveControllerCommandReverseEscape);
       case "ConeBalance":
@@ -356,8 +368,9 @@ public class RobotContainer {
           .andThen(advanceSetup)
           .andThen(swerveControllerCommandAdvance)
           .andThen(lowerArm)
+          .andThen(openIntake)
           .andThen(reverseSetup)
-          .andThen(swerveControllerCommandReverseBalance)
+          .andThen(swerveControllerCommandReverseBalance/*.alongWith(Commands.waitSeconds(2).andThen(dropArm))*/)
           .andThen(new AutoBalanceSwerve(s_Swerve));
       case "AutoBalance":
         return swerveControllerCommandReverseBalance

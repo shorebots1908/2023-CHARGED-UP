@@ -290,7 +290,10 @@ public class ArmSubsystem extends SubsystemBase{
 
         if(wristHolding)
         {
-            modifyWristHold((shoulderPosition1 - oldShoulderPosition) * motorRatios);
+            if(!armHolding)
+            {
+                modifyWristHold((shoulderPosition1 - oldShoulderPosition) * motorRatios);
+            }
             //wristHoldPosition += (shoulderPosition1 - oldShoulderPosition) * motorRatios;
             wristHold(wristHoldPosition);
         }
