@@ -43,7 +43,7 @@ public class IntakeSubsystem extends SubsystemBase {
     private boolean cubeMode = false;
     private boolean coneMode = true;
     ///swap the ports on the solenoids (forwardChannel and reverseChannel) if the piston is going the wrong way.
-    private DoubleSolenoid solenoid1 = new DoubleSolenoid(18, PneumaticsModuleType.REVPH, 0, 1);
+    private DoubleSolenoid solenoid1 = new DoubleSolenoid(18, PneumaticsModuleType.CTREPCM, 0, 1);
 
     private MotorControllerGroup m_intakeMotors = new MotorControllerGroup(m_intakeMotor1, m_intakeMotor2);
 
