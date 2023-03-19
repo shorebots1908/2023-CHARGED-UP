@@ -170,7 +170,7 @@ public class RobotContainer {
     m_XBoxController.x()
       .onTrue(Commands.runOnce(() -> {
         m_ArmSubsystem.armHoldSet(46);
-        m_ArmSubsystem.setWristPosition(-19.2);
+        m_ArmSubsystem.setWristPosition(-18.5);
         m_ArmSubsystem.setArmHolding();
       }));
     // m_XBoxController.y()
@@ -226,7 +226,7 @@ public class RobotContainer {
     Trajectory reverseTrajectoryBalance = 
       TrajectoryGenerator.generateTrajectory(
         List.of(new Pose2d(0, 0, Rotation2d.fromRadians(0)), 
-        new Pose2d(new Translation2d(-1.8, 0), Rotation2d.fromRadians(0))), 
+        new Pose2d(new Translation2d(-1.5, 0), Rotation2d.fromRadians(0))), 
         reverseConfig);
 
     Trajectory advanceTrajectory = 
