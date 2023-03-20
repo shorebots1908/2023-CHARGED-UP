@@ -127,6 +127,10 @@ public class Swerve extends SubsystemBase {
         return (Constants.Swerve.invertGyro) ? Rotation2d.fromDegrees(360 - gyro.getYaw()) : Rotation2d.fromDegrees(gyro.getYaw());
     }
 
+    public float getPitch(){
+        return gyro.getPitch();
+    }
+
     public void resetModulesToAbsolute(){
         for(SwerveModule mod : mSwerveMods){
             mod.resetToAbsolute();
@@ -139,6 +143,7 @@ public class Swerve extends SubsystemBase {
 
         //put gyro yaw on the dashboard to help with calibration.
         SmartDashboard.putNumber("Reported Yaw", gyro.getYaw());
+        SmartDashboard.putNumber("Reported Pitch", gyro.getPitch());
 
         for(SwerveModule mod : mSwerveMods){
             SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Cancoder", mod.getCanCoder().getDegrees());
