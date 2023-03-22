@@ -42,12 +42,18 @@ public class IntakeSubsystem extends SubsystemBase {
     private double minRPM = 0.3;
     private boolean cubeMode = false;
     private boolean coneMode = true;
+
+    private LedLightsSubsystem ledLightsSubsystem;
+    private double coneModeColor = 0.69; //yellow
+    private double cubeModeColor = 0.91; //purple
+    private double intakeColor = 0.77; //green
+
     ///swap the ports on the solenoids (forwardChannel and reverseChannel) if the piston is going the wrong way.
     private DoubleSolenoid solenoid1 = new DoubleSolenoid(18, PneumaticsModuleType.CTREPCM, 0, 1);
 
     private MotorControllerGroup m_intakeMotors = new MotorControllerGroup(m_intakeMotor1, m_intakeMotor2);
 
-    public IntakeSubsystem() {
+    public IntakeSubsystem(LedLightsSubsystem ledLightsSubsystem) {
         m_intakeMotor1.setIdleMode(IdleMode.kBrake);
         m_intakeMotor2.setIdleMode(IdleMode.kBrake);
         m_intakeMotor2.setInverted(true);
@@ -60,6 +66,7 @@ public class IntakeSubsystem extends SubsystemBase {
         encoder1 = m_intakeMotor1.getEncoder();
         encoder2 = m_intakeMotor2.getEncoder();
         solenoid1.set(Value.kForward);
+        this.ledLightsSubsystem = ledLightsSubsystem;
     }
     
     public void setCubeMode(){
@@ -110,6 +117,7 @@ public class IntakeSubsystem extends SubsystemBase {
     {
         if(runIntake){
             m_intakeMotors.set(intakeSpeed);
+            ledLightsSubsystem.setLEDColor(intakeColor);
             if(Timer.getFPGATimestamp() - timeCheck > 0.5){//Hold intake motor at low speed
                 if(Math.abs(encoder1.getVelocity()) < minRPM || Math.abs(encoder2.getVelocity()) < minRPM) {
                     if(Timer.getFPGATimestamp() - timeCheck > 40){ //Stop after 60 seconds
@@ -126,6 +134,15 @@ public class IntakeSubsystem extends SubsystemBase {
         }
         else {
             //TODO: add functionality to pull piece back in if the intake motors are letting it slip out. 
+            if(cubeMode)
+            {
+                ledLightsSubsystem.setLEDColor(cubeModeColor);
+            }
+            else if(coneMode)
+            {
+                ledLightsSubsystem.setLEDColor(coneModeColor);
+            }
+            
             if(!runReverse){
                 intakeStop();
             }

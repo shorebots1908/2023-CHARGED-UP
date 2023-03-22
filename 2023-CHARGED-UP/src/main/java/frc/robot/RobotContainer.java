@@ -29,6 +29,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 // import frc.robot.commands.DefaultDriveCommand;
 // import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.LedLightsSubsystem;
 
 import java.time.Instant;
 import java.util.List;
@@ -72,7 +73,8 @@ public class RobotContainer {
 
   // The robot's subsystems and commands are defined here...
   //private final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
-  private final IntakeSubsystem m_intakeSubsystem = new IntakeSubsystem();
+
+  private final IntakeSubsystem m_intakeSubsystem = new IntakeSubsystem(new LedLightsSubsystem());
   private final ArmSubsystem m_ArmSubsystem = new ArmSubsystem();
   private final Swerve s_Swerve = new Swerve();
   private int speedMode = 2;
