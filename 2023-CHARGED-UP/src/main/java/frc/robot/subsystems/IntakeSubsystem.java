@@ -44,8 +44,8 @@ public class IntakeSubsystem extends SubsystemBase {
     private boolean coneMode = true;
 
     private LedLightsSubsystem ledLightsSubsystem;
-    private double coneModeColor = 0.69; //yellow
-    private double cubeModeColor = 0.91; //purple
+    private double coneModeColor = 0.69; //yellow 0.69
+    private double cubeModeColor = 0.91; //purple 0.91
     private double intakeColor = 0.77; //green
 
     ///swap the ports on the solenoids (forwardChannel and reverseChannel) if the piston is going the wrong way.
@@ -117,7 +117,12 @@ public class IntakeSubsystem extends SubsystemBase {
     {
         if(runIntake){
             m_intakeMotors.set(intakeSpeed);
-            ledLightsSubsystem.setLEDColor(intakeColor);
+            if(cubeMode) {
+                ledLightsSubsystem.setLEDColor(-0.09);
+            }
+            else if(coneMode) {
+                ledLightsSubsystem.setLEDColor(-0.07);
+            }
             if(Timer.getFPGATimestamp() - timeCheck > 0.5){//Hold intake motor at low speed
                 if(Math.abs(encoder1.getVelocity()) < minRPM || Math.abs(encoder2.getVelocity()) < minRPM) {
                     if(Timer.getFPGATimestamp() - timeCheck > 40){ //Stop after 60 seconds
