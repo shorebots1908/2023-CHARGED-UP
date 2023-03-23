@@ -364,7 +364,8 @@ public class RobotContainer {
           .andThen(lowerArm)
           .andThen(openIntake)
           .andThen(reverseSetup)
-          .andThen(swerveControllerCommandReverseEscape);
+          .andThen(swerveControllerCommandReverseEscape)
+          .andThen(s_Swerve::zeroGyroInverted);
       case "ConeBalance":
         return  raiseArm
           .andThen(liftWrist)
@@ -374,10 +375,12 @@ public class RobotContainer {
           .andThen(openIntake)
           .andThen(reverseSetup)
           .andThen(swerveControllerCommandReverseBalance/*.alongWith(Commands.waitSeconds(2).andThen(dropArm))*/)
-          .andThen(new AutoBalanceSwerve(s_Swerve));
+          .andThen(new AutoBalanceSwerve(s_Swerve))
+          .andThen(s_Swerve::zeroGyroInverted);
       case "AutoBalance":
         return swerveControllerCommandReverseBalance
-        .andThen(new AutoBalanceSwerve(s_Swerve));
+        .andThen(new AutoBalanceSwerve(s_Swerve))
+        .andThen(s_Swerve::zeroGyroInverted);
           
     }
 
