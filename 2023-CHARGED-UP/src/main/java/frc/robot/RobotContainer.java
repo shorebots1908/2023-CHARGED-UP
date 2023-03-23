@@ -354,7 +354,8 @@ public class RobotContainer {
           .andThen(lowerArm)
           .andThen(openIntake)
           .andThen(reverseSetup)
-          .andThen(swerveControllerCommandReverse);
+          .andThen(swerveControllerCommandReverse)
+          .andThen(s_Swerve::zeroGyroInverted);
       case "Escape":
         return  raiseArm
           .andThen(liftWrist)
