@@ -172,7 +172,7 @@ public class RobotContainer {
     m_XBoxController.x()
       .onTrue(Commands.runOnce(() -> {
         m_ArmSubsystem.armHoldSet(46);
-        m_ArmSubsystem.setWristPosition(-18.5);
+        m_ArmSubsystem.setWristPosition(-24.4); // updated after gear ratio change
         m_ArmSubsystem.setArmHolding();
       }));
     // m_XBoxController.y()
@@ -324,7 +324,7 @@ public class RobotContainer {
     FunctionalCommand liftWrist = 
       new FunctionalCommand(
         () -> {}, 
-        () -> {m_ArmSubsystem.setWristPosition(-13);
+        () -> {m_ArmSubsystem.setWristPosition(-17.33);
         m_ArmSubsystem.setWristHolding();}, 
         interrupted -> {m_ArmSubsystem.wristHold(m_ArmSubsystem.getCurrentWristPosition());}, 
         () -> {return Math.abs(-13 - m_ArmSubsystem.getCurrentWristPosition()) < 0.5;}, 
