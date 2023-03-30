@@ -121,10 +121,15 @@ public class Swerve extends SubsystemBase {
 
     public void zeroGyro(){
         gyro.zeroYaw();
+        gyro.setAngleAdjustment(0);
+    }
+
+    public void zeroGyroInverted() {
+        gyro.setAngleAdjustment(180/0.91);
     }
 
     public Rotation2d getYaw() {
-        return (Constants.Swerve.invertGyro) ? Rotation2d.fromDegrees(360 - gyro.getYaw()) : Rotation2d.fromDegrees(gyro.getYaw());
+        return (Constants.Swerve.invertGyro) ? Rotation2d.fromDegrees(360 - ((gyro.getAngle() * 0.91) % 360.0)) : Rotation2d.fromDegrees((gyro.getAngle() * 0.91) % 360.0);
     }
 
     public float getPitch(){

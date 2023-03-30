@@ -172,15 +172,15 @@ public class RobotContainer {
     m_XBoxController.x()
       .onTrue(Commands.runOnce(() -> {
         m_ArmSubsystem.armHoldSet(46);
-        m_ArmSubsystem.setWristPosition(-18.5);
+        m_ArmSubsystem.setWristPosition(-24.72); // updated after gear ratio change
         m_ArmSubsystem.setArmHolding();
       }));
-    // m_XBoxController.y()
-    //   .onTrue(Commands.runOnce(() -> {
-    //     m_ArmSubsystem.armHoldSet(m_ArmSubsystem.getHighPosition(0));
-    //     m_ArmSubsystem.wristHold(m_ArmSubsystem.getHighPosition(1));
-    //     m_ArmSubsystem.setArmHolding();
-    //   }));
+     m_XBoxController.y()
+       .onTrue(Commands.runOnce(() -> {
+         m_ArmSubsystem.armHoldSet(11.2);
+         m_ArmSubsystem.setWristPosition(-21.82); 
+         m_ArmSubsystem.setArmHolding();
+       }));
       m_XBoxController.povUp()
         .onTrue(Commands.runOnce(() -> {speedMode = 0;}));
       m_XBoxController.povRight()
@@ -324,7 +324,7 @@ public class RobotContainer {
     FunctionalCommand liftWrist = 
       new FunctionalCommand(
         () -> {}, 
-        () -> {m_ArmSubsystem.setWristPosition(-13);
+        () -> {m_ArmSubsystem.setWristPosition(-17.33);
         m_ArmSubsystem.setWristHolding();}, 
         interrupted -> {m_ArmSubsystem.wristHold(m_ArmSubsystem.getCurrentWristPosition());}, 
         () -> {return Math.abs(-13 - m_ArmSubsystem.getCurrentWristPosition()) < 0.5;}, 
@@ -354,7 +354,8 @@ public class RobotContainer {
           .andThen(lowerArm)
           .andThen(openIntake)
           .andThen(reverseSetup)
-          .andThen(swerveControllerCommandReverse);
+          .andThen(swerveControllerCommandReverse)
+          .andThen(s_Swerve::zeroGyroInverted);
       case "Escape":
         return  raiseArm
           .andThen(liftWrist)
@@ -363,7 +364,8 @@ public class RobotContainer {
           .andThen(lowerArm)
           .andThen(openIntake)
           .andThen(reverseSetup)
-          .andThen(swerveControllerCommandReverseEscape);
+          .andThen(swerveControllerCommandReverseEscape)
+          .andThen(s_Swerve::zeroGyroInverted);
       case "ConeBalance":
         return  raiseArm
           .andThen(liftWrist)
@@ -373,10 +375,12 @@ public class RobotContainer {
           .andThen(openIntake)
           .andThen(reverseSetup)
           .andThen(swerveControllerCommandReverseBalance/*.alongWith(Commands.waitSeconds(2).andThen(dropArm))*/)
-          .andThen(new AutoBalanceSwerve(s_Swerve));
+          .andThen(new AutoBalanceSwerve(s_Swerve))
+          .andThen(s_Swerve::zeroGyroInverted);
       case "AutoBalance":
         return swerveControllerCommandReverseBalance
-        .andThen(new AutoBalanceSwerve(s_Swerve));
+        .andThen(new AutoBalanceSwerve(s_Swerve))
+        .andThen(s_Swerve::zeroGyroInverted);
           
     }
 
