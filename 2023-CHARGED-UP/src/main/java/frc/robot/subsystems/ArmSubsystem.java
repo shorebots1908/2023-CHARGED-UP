@@ -29,8 +29,8 @@ public class ArmSubsystem extends SubsystemBase{
         }
     }
     
-    private double armSpeedLimit = 0.6;
-    private double wristSpeedLimit = 0.35;
+    private double armSpeedLimit = 0.60;
+    private double wristSpeedLimit = 0.45; // upped from .35 after ratio change -MZ
     private double[] armStates = {0.0, 0.0};
 
     //encoders
@@ -46,7 +46,7 @@ public class ArmSubsystem extends SubsystemBase{
     private double motorRatios = 27.0 / 400.0;
     private double shoulderDeviation = 1;
     private double wristDeviation = 0.2;
-    private double wristMax = -22;
+    private double wristMax = -29;
     private double wristMin = 2;
     private double[] HighPosition = {105, -13};
     private double[] MidPosition = {85, -13};
