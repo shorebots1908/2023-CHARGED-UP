@@ -172,13 +172,13 @@ public class RobotContainer {
     m_XBoxController.x()
       .onTrue(Commands.runOnce(() -> {
         m_ArmSubsystem.armHoldSet(46);
-        m_ArmSubsystem.setWristPosition(-24.4); // updated after gear ratio change
+        m_ArmSubsystem.setWristPosition(-24.72); // updated after gear ratio change
         m_ArmSubsystem.setArmHolding();
       }));
      m_XBoxController.y()
        .onTrue(Commands.runOnce(() -> {
          m_ArmSubsystem.armHoldSet(11.2);
-         m_ArmSubsystem.setWristPosition(-21.5); 
+         m_ArmSubsystem.setWristPosition(-21.82); 
          m_ArmSubsystem.setArmHolding();
        }));
       m_XBoxController.povUp()
