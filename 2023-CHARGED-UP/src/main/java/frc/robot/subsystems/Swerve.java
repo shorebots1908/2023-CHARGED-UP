@@ -26,7 +26,7 @@ public class Swerve extends SubsystemBase {
     //TODO: Swap out navx for pigeon.
     public AHRS gyro;
     private double[] speedScale = {1, 0.5, .25};
-    private boolean orientationToggle = true;
+    private boolean orientationToggle = false;
 
 
     public Swerve() {
