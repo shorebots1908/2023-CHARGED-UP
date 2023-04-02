@@ -164,7 +164,8 @@ public class RobotContainer {
       .onTrue(Commands.runOnce(s_Swerve:: zeroGyro));
     m_XBoxController.start()
       .onTrue(
-        raiseArm.alongWith(liftWrist)
+        raiseArm
+        .andThen(liftWrist)
         .andThen(teleopScoreCone));
     m_XBoxController.rightBumper()
       .onTrue(Commands.runOnce(
