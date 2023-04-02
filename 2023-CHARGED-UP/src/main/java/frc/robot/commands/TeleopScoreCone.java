@@ -11,6 +11,7 @@ import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
@@ -81,6 +82,15 @@ public class TeleopScoreCone extends CommandBase{
 				
 				InstantCommand advanceSetup = new InstantCommand(() -> {c_Swerve.resetOdometry(advanceTrajectory.getInitialPose());});
 				InstantCommand reverseSetup = new InstantCommand(() -> {c_Swerve.resetOdometry(reverseTrajectory.getInitialPose());});
+
+				FunctionalCommand coneScoreArmPosition = new FunctionalCommand(
+					() -> {}, 
+					() -> {
+						
+					},
+					null,
+					null,
+					c_Swerve);
 
 
 
