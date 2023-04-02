@@ -82,7 +82,7 @@ public class AutoBalanceSwerve extends CommandBase{
     }
 
     @Override
-    public void end(boolean innterruped) {
+    public void end(boolean interruped) {
         //s_Swerve.setLockWheels(false);
         isFinished = true;
     }
