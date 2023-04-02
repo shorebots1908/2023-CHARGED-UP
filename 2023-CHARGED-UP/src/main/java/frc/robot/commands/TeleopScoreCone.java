@@ -43,34 +43,9 @@ public class TeleopScoreCone extends CommandBase{
 		private double targetX, targetY, targetArea;
 		private boolean isArmInPosition = false;
 
-		FunctionalCommand raiseArm = 
-			new FunctionalCommand(
-				() -> {}, 
-				() -> {c_ArmSubsystem.armHoldSet(115);
-					c_ArmSubsystem.setArmHolding();}, 
-				interrupted -> {c_ArmSubsystem.armHoldSet(c_ArmSubsystem.getCurrentShoulderPosition());}, 
-				() -> {return Math.abs(115 - c_ArmSubsystem.getCurrentShoulderPosition()) < 3;});
-
-	FunctionalCommand lowerArm = 
-		new FunctionalCommand(
-			() -> {},
-			() -> {c_ArmSubsystem.armHoldSet(85);},
-			interrupted -> {c_ArmSubsystem.armHoldSet(c_ArmSubsystem.getCurrentShoulderPosition());},
-			() -> {return Math.abs(85 - c_ArmSubsystem.getCurrentShoulderPosition()) < 3;});
-
-	FunctionalCommand liftWrist = 
-		new FunctionalCommand(
-			() -> {}, 
-			() -> {c_ArmSubsystem.setWristPosition(-17.33);
-			c_ArmSubsystem.setWristHolding();}, 
-			interrupted -> {c_ArmSubsystem.wristHold(c_ArmSubsystem.getCurrentWristPosition());}, 
-			() -> {return Math.abs(-13 - c_ArmSubsystem.getCurrentWristPosition()) < 0.5;});
-
 		@Override
 		public void initialize()
 		{
-			(raiseArm.alongWith(liftWrist))
-			.andThen(() -> {isArmInPosition = true;});
 		}
 
 		@Override

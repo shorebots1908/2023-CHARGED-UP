@@ -163,7 +163,9 @@ public class RobotContainer {
     m_XBoxController.back()
       .onTrue(Commands.runOnce(s_Swerve:: zeroGyro));
     m_XBoxController.start()
-      .onTrue(teleopScoreCone);
+      .onTrue(
+        raiseArm.alongWith(liftWrist)
+        .andThen(teleopScoreCone));
     m_XBoxController.rightBumper()
       .onTrue(Commands.runOnce(
         m_intakeSubsystem::intake, 
@@ -201,6 +203,32 @@ public class RobotContainer {
         .onTrue(Commands.runOnce(s_Swerve::toggleOrientationMode));
 
   }
+
+  FunctionalCommand raiseArm = 
+    new FunctionalCommand(
+      () -> {}, 
+      () -> {m_ArmSubsystem.armHoldSet(115);
+        m_ArmSubsystem.setArmHolding();}, 
+      interrupted -> {m_ArmSubsystem.armHoldSet(m_ArmSubsystem.getCurrentShoulderPosition());}, 
+      () -> {return Math.abs(115 - m_ArmSubsystem.getCurrentShoulderPosition()) < 3;}, 
+      m_ArmSubsystem);
+
+  FunctionalCommand lowerArm = 
+    new FunctionalCommand(
+      () -> {},
+      () -> {m_ArmSubsystem.armHoldSet(85);},
+      interrupted -> {m_ArmSubsystem.armHoldSet(m_ArmSubsystem.getCurrentShoulderPosition());},
+      () -> {return Math.abs(85 - m_ArmSubsystem.getCurrentShoulderPosition()) < 3;}
+    );
+
+  FunctionalCommand liftWrist = 
+    new FunctionalCommand(
+      () -> {}, 
+      () -> {m_ArmSubsystem.setWristPosition(-17.33);
+      m_ArmSubsystem.setWristHolding();}, 
+      interrupted -> {m_ArmSubsystem.wristHold(m_ArmSubsystem.getCurrentWristPosition());}, 
+      () -> {return Math.abs(-13 - m_ArmSubsystem.getCurrentWristPosition()) < 0.5;}, 
+      m_ArmSubsystem);
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
@@ -311,32 +339,6 @@ public class RobotContainer {
       interrupted -> {m_ArmSubsystem.armHoldSet(m_ArmSubsystem.getCurrentShoulderPosition());}, 
       () -> {return Math.abs(45 - m_ArmSubsystem.getCurrentShoulderPosition()) < 3;},
       m_ArmSubsystem);
-
-    FunctionalCommand raiseArm = 
-      new FunctionalCommand(
-        () -> {}, 
-        () -> {m_ArmSubsystem.armHoldSet(115);
-          m_ArmSubsystem.setArmHolding();}, 
-        interrupted -> {m_ArmSubsystem.armHoldSet(m_ArmSubsystem.getCurrentShoulderPosition());}, 
-        () -> {return Math.abs(115 - m_ArmSubsystem.getCurrentShoulderPosition()) < 3;}, 
-        m_ArmSubsystem);
-
-    FunctionalCommand lowerArm = 
-      new FunctionalCommand(
-        () -> {},
-        () -> {m_ArmSubsystem.armHoldSet(85);},
-        interrupted -> {m_ArmSubsystem.armHoldSet(m_ArmSubsystem.getCurrentShoulderPosition());},
-        () -> {return Math.abs(85 - m_ArmSubsystem.getCurrentShoulderPosition()) < 3;}
-      );
-
-    FunctionalCommand liftWrist = 
-      new FunctionalCommand(
-        () -> {}, 
-        () -> {m_ArmSubsystem.setWristPosition(-17.33);
-        m_ArmSubsystem.setWristHolding();}, 
-        interrupted -> {m_ArmSubsystem.wristHold(m_ArmSubsystem.getCurrentWristPosition());}, 
-        () -> {return Math.abs(-13 - m_ArmSubsystem.getCurrentWristPosition()) < 0.5;}, 
-        m_ArmSubsystem);
 
     // FunctionalCommand eject = 
     //   new FunctionalCommand(
