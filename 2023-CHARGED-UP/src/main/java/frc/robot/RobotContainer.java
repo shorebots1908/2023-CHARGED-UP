@@ -81,7 +81,7 @@ public class RobotContainer {
   private final Swerve s_Swerve = new Swerve();
   private int speedMode = 2;
 
-  private final Command teleopScoreCone = new TeleopScoreCone(s_Swerve, m_ArmSubsystem, m_intakeSubsystem);
+  private final Command teleopScoreCone;
   
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -144,6 +144,8 @@ public class RobotContainer {
      () -> modifyAxis(m_controller.getRightTriggerAxis()),
      () -> modifyAxis(m_controller.getLeftTriggerAxis()),
      () -> modifyAxis(m_controller.getRightY())));
+
+     teleopScoreCone = new TeleopScoreCone(s_Swerve, m_ArmSubsystem, m_intakeSubsystem);
 
     // Configure the button bindings
     configureButtonBindings();
