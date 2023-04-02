@@ -57,7 +57,8 @@ public class TeleopScoreCone extends CommandBase{
 			() -> {},
 			() -> {c_ArmSubsystem.armHoldSet(85);},
 			interrupted -> {c_ArmSubsystem.armHoldSet(c_ArmSubsystem.getCurrentShoulderPosition());},
-			() -> {return Math.abs(85 - c_ArmSubsystem.getCurrentShoulderPosition()) < 3;}
+			() -> {return Math.abs(85 - c_ArmSubsystem.getCurrentShoulderPosition()) < 3;},
+			c_ArmSubsystem
 		);
 
 	FunctionalCommand liftWrist = 
@@ -66,8 +67,8 @@ public class TeleopScoreCone extends CommandBase{
 			() -> {c_ArmSubsystem.setWristPosition(-17.33);
 			c_ArmSubsystem.setWristHolding();}, 
 			interrupted -> {c_ArmSubsystem.wristHold(c_ArmSubsystem.getCurrentWristPosition());}, 
-			() -> {return Math.abs(-13 - c_ArmSubsystem.getCurrentWristPosition()) < 0.5;}, 
-			c_ArmSubsystem);
+			() -> {return Math.abs(-13 - c_ArmSubsystem.getCurrentWristPosition()) < 0.5;}
+			);
 
 		@Override
 		public void initialize()
