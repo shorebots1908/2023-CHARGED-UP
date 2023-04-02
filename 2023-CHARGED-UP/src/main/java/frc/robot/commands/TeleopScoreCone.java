@@ -18,6 +18,7 @@ import frc.robot.Constants;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.Swerve;
+import edu.wpi.first.wpilibj2.command.*;
 
 public class TeleopScoreCone extends CommandBase{
 		private Swerve c_Swerve;
@@ -34,56 +35,39 @@ public class TeleopScoreCone extends CommandBase{
 				addRequirements(swerve, armSubsystem, intakeSubsystem);
 		}
 
-		public Command Score() {
-
-			var thetaController = 
-				new ProfiledPIDController(
-					Constants.AutoConstants.kPThetaController, 0 , 0, Constants.AutoConstants.kThetaControllerConstraints);
-				thetaController.enableContinuousInput(-Math.PI, Math.PI);
-			
-				TrajectoryConfig config = 
-				new TrajectoryConfig(
-					Constants.AutoConstants.kMaxSpeedMetersPerSecond * 0.5, 
-					Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared)
-					.setKinematics(Constants.Swerve.swerveKinematics);
+		private final PIDController headingController = 
+      new PIDController(Constants.AutoConstants.kPXController, 0, 0);
 		
-				TrajectoryConfig reverseConfig = 
-					new TrajectoryConfig(
-						Constants.AutoConstants.kMaxSpeedMetersPerSecond * 0.5, 
-						Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared)
-						.setKinematics(Constants.Swerve.swerveKinematics)
-						.setReversed(true);
-						
-				Trajectory reverseTrajectory = 
-				TrajectoryGenerator.generateTrajectory(
-					List.of(new Pose2d(0, 0, Rotation2d.fromRadians(0)), 
-					new Pose2d(new Translation2d(0, 0), Rotation2d.fromRadians(0))), 
-					reverseConfig);
-							
-				Trajectory advanceTrajectory = 
-				TrajectoryGenerator.generateTrajectory(
-					List.of(
-						new Pose2d(0, 0, Rotation2d.fromRadians(0)), 
-						new Pose2d(0, 0, Rotation2d.fromRadians(0))), 
-						config);
-		
-				SwerveControllerCommand swerveControllerCommandAdvance = 
-						new SwerveControllerCommand(
-								advanceTrajectory, 
-								c_Swerve::getPose, 
-								Constants.Swerve.swerveKinematics, 
-								
-								new PIDController(Constants.AutoConstants.kPXController, 0, 0), 
-								new PIDController(Constants.AutoConstants.kPXController, 0, 0), 
-								thetaController,
-								c_Swerve::setModuleStates,
-								c_Swerve);
-				
-				InstantCommand advanceSetup = new InstantCommand(() -> {c_Swerve.resetOdometry(advanceTrajectory.getInitialPose());});
-				InstantCommand reverseSetup = new InstantCommand(() -> {c_Swerve.resetOdometry(reverseTrajectory.getInitialPose());});
+		private double rotation;
+		private double targetX, targetY, targetArea;
 
+		@Override
+		public void execute()
+		{
+			rotation = headingController.calculate(0, 180);
+			targetX = c_limelightTable.getValue("tx").getDouble();
+			targetY = c_limelightTable.getValue("ty").getDouble();
+			targetArea = c_limelightTable.getValue("ta").getDouble();
+			if(c_limelightTable.getEntry("tv").getBoolean(false) && (c_Swerve.getYaw().getDegrees() > 170 || c_Swerve.getYaw().getDegrees() < -170))
+			{
+				Translation2d translation = new Translation2d(
+					0.0, 
+					Math.abs(targetX) > 1 ? Math.copySign(Math.min(Math.max(0.2, 0.2 * Math.abs(targetX)), 1.0), targetX) : 0
+				);
+				c_Swerve.drive(translation, rotation, true, true);
+			}
+		}
 
+		@Override
+		public void end(boolean interrupted)
+		{
 
+		}
+
+		@Override
+		public boolean isFinished()
+		{
+			return (Math.abs(targetX) < 1);
 		}
 
 }
