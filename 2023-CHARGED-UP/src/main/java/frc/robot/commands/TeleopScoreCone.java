@@ -33,7 +33,7 @@ public class TeleopScoreCone extends CommandBase{
 				c_ArmSubsystem = armSubsystem;
 				c_IntakeSubsystem = intakeSubsystem;
 
-				addRequirements(swerve, armSubsystem, intakeSubsystem);
+				addRequirements(c_Swerve, c_ArmSubsystem, c_IntakeSubsystem);
 		}
 
 		private final PIDController headingController = 
@@ -44,13 +44,13 @@ public class TeleopScoreCone extends CommandBase{
 		private boolean isArmInPosition = false;
 
 		FunctionalCommand raiseArm = 
-		new FunctionalCommand(
-			() -> {}, 
-			() -> {c_ArmSubsystem.armHoldSet(115);
-				c_ArmSubsystem.setArmHolding();}, 
-			interrupted -> {c_ArmSubsystem.armHoldSet(c_ArmSubsystem.getCurrentShoulderPosition());}, 
-			() -> {return Math.abs(115 - c_ArmSubsystem.getCurrentShoulderPosition()) < 3;}, 
-			c_ArmSubsystem);
+			new FunctionalCommand(
+				() -> {}, 
+				() -> {c_ArmSubsystem.armHoldSet(115);
+					c_ArmSubsystem.setArmHolding();}, 
+				interrupted -> {c_ArmSubsystem.armHoldSet(c_ArmSubsystem.getCurrentShoulderPosition());}, 
+				() -> {return Math.abs(115 - c_ArmSubsystem.getCurrentShoulderPosition()) < 3;}, 
+				c_ArmSubsystem);
 
 	FunctionalCommand lowerArm = 
 		new FunctionalCommand(
