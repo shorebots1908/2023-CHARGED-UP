@@ -63,13 +63,17 @@ public class TeleopScoreCone extends CommandBase{
 				" LLX: " + targetX + 
 				" LLY: " + targetY + 
 				" LLA: " + targetArea);
-			if(c_limelightTable.getEntry("tv").getBoolean(false) && (c_Swerve.getYaw().getDegrees() > 170 || c_Swerve.getYaw().getDegrees() < -170))
+			if(c_limelightTable.getEntry("tv").getDouble(0) == 1 && (c_Swerve.getYaw().getDegrees() > 170 || c_Swerve.getYaw().getDegrees() < -170))
 			{
 				Translation2d translation = new Translation2d(
 					0.0, 
 					Math.abs(targetX) > 1 ? Math.copySign(Math.min(Math.max(0.2, 0.2 * Math.abs(targetX)), 1.0), targetX) : 0
 				);
 				c_Swerve.drive(translation, rotation, true, true);
+			}
+			else if(!(c_Swerve.getYaw().getDegrees() > 170 || c_Swerve.getYaw().getDegrees() < -170))
+			{
+				c_Swerve.drive(new Translation2d(), rotation, true, true);
 			}
 		}
 

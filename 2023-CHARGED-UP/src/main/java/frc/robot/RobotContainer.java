@@ -65,7 +65,7 @@ public class RobotContainer {
   private final int rotationAxis = XboxController.Axis.kRightX.value;
 
   private UsbCamera camera1;
-  private UsbCamera camera2;
+  //private UsbCamera camera2;
 
   private final SendableChooser<String> autoSelector = new SendableChooser();
 
