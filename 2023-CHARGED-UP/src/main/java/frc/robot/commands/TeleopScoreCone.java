@@ -10,6 +10,7 @@ import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
@@ -56,6 +57,12 @@ public class TeleopScoreCone extends CommandBase{
 			targetX = c_limelightTable.getEntry("tx").getDouble(0);
 			targetY = c_limelightTable.getEntry("ty").getDouble(0);
 			targetArea = c_limelightTable.getEntry("ta").getDouble(0);
+			SmartDashboard.putString(
+				"Limelight Values", 
+				"LLT: " + c_limelightTable.getEntry("tv").getBoolean(false) + 
+				" LLX: " + targetX + 
+				" LLY: " + targetY + 
+				" LLA: " + targetArea);
 			if(c_limelightTable.getEntry("tv").getBoolean(false) && (c_Swerve.getYaw().getDegrees() > 170 || c_Swerve.getYaw().getDegrees() < -170))
 			{
 				Translation2d translation = new Translation2d(
