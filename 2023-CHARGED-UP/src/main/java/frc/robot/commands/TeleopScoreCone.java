@@ -54,12 +54,12 @@ public class TeleopScoreCone extends CommandBase{
 		{
 			rotation = headingController.calculate(0, 180);
 			c_limelightTable = NetworkTableInstance.getDefault().getTable("limelight");
-			targetX = c_limelightTable.getEntry("tx").getDouble(0);
-			targetY = c_limelightTable.getEntry("ty").getDouble(0);
-			targetArea = c_limelightTable.getEntry("ta").getDouble(0);
+			targetX = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0);
+			targetY = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ty").getDouble(0);
+			targetArea = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ta").getDouble(0);
 			SmartDashboard.putString(
 				"Limelight Values", 
-				"LLT: " + c_limelightTable.getEntry("tv").getBoolean(false) + 
+				"LLT: " + NetworkTableInstance.getDefault().getTable("limelight").getEntry("tv").getBoolean(false) + 
 				" LLX: " + targetX + 
 				" LLY: " + targetY + 
 				" LLA: " + targetArea);
