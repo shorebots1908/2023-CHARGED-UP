@@ -78,9 +78,9 @@ public class TeleopScoreCone extends CommandBase{
 		{
 			rotation = headingController.calculate(0, 180);
 			c_limelightTable = NetworkTableInstance.getDefault().getTable("limelight");
-			targetX = c_limelightTable.getValue("tx").getDouble();
-			targetY = c_limelightTable.getValue("ty").getDouble();
-			targetArea = c_limelightTable.getValue("ta").getDouble();
+			targetX = c_limelightTable.getEntry("tx").getDouble(0);
+			targetY = c_limelightTable.getEntry("ty").getDouble(0);
+			targetArea = c_limelightTable.getEntry("ta").getDouble(0);
 			if(c_limelightTable.getEntry("tv").getBoolean(false) && (c_Swerve.getYaw().getDegrees() > 170 || c_Swerve.getYaw().getDegrees() < -170))
 			{
 				Translation2d translation = new Translation2d(
