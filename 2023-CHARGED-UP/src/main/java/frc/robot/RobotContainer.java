@@ -81,7 +81,7 @@ public class RobotContainer {
   private final Swerve s_Swerve = new Swerve();
   private int speedMode = 2;
 
-  private NetworkTable limelightTable = NetworkTableInstance.getDefault().getTable("limelight");
+  private final Command teleopScoreCone = new TeleopScoreCone(s_Swerve, m_ArmSubsystem, m_intakeSubsystem);
   
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -160,6 +160,8 @@ public class RobotContainer {
     // Back button zeros the gyroscope
     m_XBoxController.back()
       .onTrue(Commands.runOnce(s_Swerve:: zeroGyro));
+    m_XBoxController.start()
+      .onTrue(teleopScoreCone);
     m_XBoxController.rightBumper()
       .onTrue(Commands.runOnce(
         m_intakeSubsystem::intake, 

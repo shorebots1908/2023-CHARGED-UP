@@ -9,6 +9,7 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -26,11 +27,10 @@ public class TeleopScoreCone extends CommandBase{
 		private IntakeSubsystem c_IntakeSubsystem;
 		private NetworkTable c_limelightTable;
 
-		public TeleopScoreCone(Swerve swerve, ArmSubsystem armSubsystem, IntakeSubsystem intakeSubsystem, NetworkTable limelightTable) {
+		public TeleopScoreCone(Swerve swerve, ArmSubsystem armSubsystem, IntakeSubsystem intakeSubsystem) {
 				c_Swerve = swerve;
 				c_ArmSubsystem = armSubsystem;
 				c_IntakeSubsystem = intakeSubsystem;
-				c_limelightTable = limelightTable;
 
 				addRequirements(swerve, armSubsystem, intakeSubsystem);
 		}
@@ -40,11 +40,46 @@ public class TeleopScoreCone extends CommandBase{
 		
 		private double rotation;
 		private double targetX, targetY, targetArea;
+		private boolean isArmInPosition = false;
+
+		FunctionalCommand raiseArm = 
+		new FunctionalCommand(
+			() -> {}, 
+			() -> {c_ArmSubsystem.armHoldSet(115);
+				c_ArmSubsystem.setArmHolding();}, 
+			interrupted -> {c_ArmSubsystem.armHoldSet(c_ArmSubsystem.getCurrentShoulderPosition());}, 
+			() -> {return Math.abs(115 - c_ArmSubsystem.getCurrentShoulderPosition()) < 3;}, 
+			c_ArmSubsystem);
+
+	FunctionalCommand lowerArm = 
+		new FunctionalCommand(
+			() -> {},
+			() -> {c_ArmSubsystem.armHoldSet(85);},
+			interrupted -> {c_ArmSubsystem.armHoldSet(c_ArmSubsystem.getCurrentShoulderPosition());},
+			() -> {return Math.abs(85 - c_ArmSubsystem.getCurrentShoulderPosition()) < 3;}
+		);
+
+	FunctionalCommand liftWrist = 
+		new FunctionalCommand(
+			() -> {}, 
+			() -> {c_ArmSubsystem.setWristPosition(-17.33);
+			c_ArmSubsystem.setWristHolding();}, 
+			interrupted -> {c_ArmSubsystem.wristHold(c_ArmSubsystem.getCurrentWristPosition());}, 
+			() -> {return Math.abs(-13 - c_ArmSubsystem.getCurrentWristPosition()) < 0.5;}, 
+			c_ArmSubsystem);
+
+		@Override
+		public void initialize()
+		{
+			(raiseArm.alongWith(liftWrist))
+			.andThen(() -> {isArmInPosition = true;});
+		}
 
 		@Override
 		public void execute()
 		{
 			rotation = headingController.calculate(0, 180);
+			c_limelightTable = NetworkTableInstance.getDefault().getTable("limelight");
 			targetX = c_limelightTable.getValue("tx").getDouble();
 			targetY = c_limelightTable.getValue("ty").getDouble();
 			targetArea = c_limelightTable.getValue("ta").getDouble();
@@ -61,7 +96,7 @@ public class TeleopScoreCone extends CommandBase{
 		@Override
 		public void end(boolean interrupted)
 		{
-
+			c_Swerve.drive(new Translation2d(), 0, true, true);
 		}
 
 		@Override
