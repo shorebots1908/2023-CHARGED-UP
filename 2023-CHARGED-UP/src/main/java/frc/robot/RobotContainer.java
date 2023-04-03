@@ -156,6 +156,12 @@ public class RobotContainer {
     // Back button zeros the gyroscope
     m_XBoxController.back()
       .onTrue(Commands.runOnce(s_Swerve:: zeroGyro));
+    m_XBoxController.start()
+    .onTrue(Commands.runOnce(() -> {
+      m_ArmSubsystem.armHoldSet(92.4);
+      m_ArmSubsystem.setWristPosition(-17); // updated after gear ratio change
+      m_ArmSubsystem.setArmHolding();
+    }));
     m_XBoxController.rightBumper()
       .onTrue(Commands.runOnce(
         m_intakeSubsystem::intake, 
